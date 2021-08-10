@@ -50,6 +50,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
       builder: (context, watch, _){
 
         final _currentUserProvider = watch(currentUserProvider);
+        final _purchasesProvider = watch(purchasesProvider);
         final _handlesProvider = watch(handlesProvider);
         final _chatProvider = watch(chatProvider);
         final _userProvider = watch(userProvider);
@@ -66,8 +67,14 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 iOS: CupertinoIcons.add,
                 color: Colors.white, size: 28,
               ),
-              onPressed: (){
-                Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
+              onPressed: () async {
+                _purchasesProvider.getPurchaserInfo().then((value){
+                  if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true) || (value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
+                    Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
+                  } else {
+                    Get.to(() => SubscriptionPage(), transition: Transition.cupertino);
+                  }
+                });           
               },
             ),
             appBar: AppBar(
@@ -355,36 +362,283 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
             ),
             body: _currentUserProvider.when(
               data: (user){
-                return TabBarView(
-                  controller: _tabController,
-                  children: [
-                    !(user.handlesList!.first == "" && user.handlesList!.length > 1)
-                    ? EmptyHandles(
-                        isHandlesPage: true
-                      )
-                    : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                return FutureBuilder<PurchaserInfo>(
+                  future: _purchasesProvider.getPurchaserInfo(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                    ? TabBarView(
+                      controller: _tabController,
                       children: [
-                        isSearchActive
-                        ? SingleChildScrollView(
-                            child: Container(
-                              height: MQuery.height(0.8, context),
+                        !(user.handlesList!.first == "" && user.handlesList!.length > 1)
+                        ? EmptyHandles(
+                            isHandlesPage: true
+                          )
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            isSearchActive
+                            ? SingleChildScrollView(
+                                child: Container(
+                                  height: MQuery.height(0.8, context),
+                                  child: Column(
+                                    children: [
+                                      StreamBuilder<List<HandlesModel>>(
+                                        stream: _handlesProvider.handlesModelSearcher(searchKey),
+                                        builder: (context, snapshot) {
+                                          return snapshot.hasData
+                                          ? Flexible(
+                                            child: Container(
+                                              child: ListView.builder(
+                                                itemCount: ((snapshot.data!.length / 100) + 1).round(),
+                                                itemBuilder: (context, index){
+                                                  return StreamBuilder<List<ChatModel>>(
+                                                      stream: _chatProvider.handlesChats(snapshot.data![index].id),
+                                                      builder: (context, chatList) {
+                                                        int newMessages = 0;
+                
+                                                        if(chatList.hasData){
+                                                          chatList.data!.forEach((element) {
+                                                            if(element.readBy.indexOf(user.id) <= 0 && element.deletedBy.indexOf(user.id) <= 0){
+                                                              newMessages++;
+                                                            }
+                                                          });
+                                                        }
+                                                        
+                                                        return chatList.hasData && chatList.data!.isNotEmpty
+                                                        ? ListTile(
+                                                            onLongPress: (){
+                                                              setState(() {
+                                                                isHandlesSelected = true;
+                                                                if(snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0){
+                                                                  selectedPinnedHandles.add(user.handlesList![index + 1]);
+                                                                } else {
+                                                                  selectedHandles.add(user.handlesList![index + 1]);
+                                                                }
+                                                              });
+                                                            },
+                                                            onTap: (){
+                                                              if(isHandlesSelected){
+                                                                if(snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0){
+                                                                  if(selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) < 0){
+                                                                    setState(() {
+                                                                      selectedPinnedHandles.add(user.handlesList![index + 1]);
+                                                                    });
+                                                                  } else {
+                                                                    setState(() {
+                                                                      selectedPinnedHandles.remove(user.handlesList![index + 1]);
+                                                                    });
+                                                                  }
+                                                                } else {
+                                                                  if(selectedHandles.toList().indexOf(user.handlesList![index + 1]) < 0){
+                                                                    setState(() {
+                                                                      selectedHandles.add(user.handlesList![index + 1]);
+                                                                    });
+                                                                  } else {
+                                                                    setState(() {
+                                                                      selectedHandles.remove(user.handlesList![index + 1]);
+                                                                    });
+                                                                  }
+                                                                }
+                                                              } else {
+                                                                Get.to(() => HandlesPage(
+                                                                  handlesID: user.handlesList![index + 1]
+                                                                ), transition: Transition.cupertino);
+                                                              }
+                                                            },
+                                                            contentPadding: EdgeInsets.fromLTRB(
+                                                              MQuery.width(0.02, context),
+                                                              index >= 1 ? MQuery.height(0.005, context) : MQuery.height(0.01, context),
+                                                              MQuery.width(0.02, context),
+                                                              MQuery.height(0.005, context),
+                                                            ),
+                                                            leading: Stack(
+                                                              alignment: Alignment.bottomRight,
+                                                              children: [
+                                                                CircleAvatar(
+                                                                  backgroundColor: Palette.primary,
+                                                                  radius: MQuery.height(0.025, context),
+                                                                  backgroundImage: NetworkImage(snapshot.data![index].cover)
+                                                                ),
+                                                                selectedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0 || selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0
+                                                                ? ZoomIn(
+                                                                    duration: Duration(milliseconds: 100),
+                                                                    child: Positioned(
+                                                                      child: CircleAvatar(
+                                                                        radius: 10,
+                                                                        child: Icon(Icons.check, size: 12, color: Colors.white),
+                                                                        backgroundColor: Palette.secondary
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : SizedBox()
+                                                              ],
+                                                            ),
+                                                            title: Font.out(
+                                                              snapshot.data![index].name,
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start
+                                                            ),
+                                                            subtitle: FutureBuilder<UserModel>(
+                                                              future: _userProvider.getUserByID(chatList.data!.last.sender),
+                                                              builder: (context, snapshot) {
+                                                                return snapshot.hasData
+                                                                ? Font.out(
+                                                                    "${snapshot.data!.id == chatList.data!.last.sender
+                                                                        ? "You:"
+                                                                        : snapshot.data!.name.split(" ").first + ":"
+                                                                    } ${
+                                                                      chatList.data!.last.type == ChatType.plain
+                                                                      ? chatList.data!.last.content!.length >= 24
+                                                                        ? chatList.data!.last.content!.substring(0, 24) + "..."
+                                                                        : chatList.data!.last.content
+                                                                      : chatList.data!.last.type == ChatType.image
+                                                                      ? "[Image]"
+                                                                      : chatList.data!.last.type == ChatType.video
+                                                                      ? "[Video]"
+                                                                      : chatList.data!.last.type == ChatType.docs
+                                                                      ? "[Docs]"
+                                                                      : chatList.data!.last.type == ChatType.meets
+                                                                      ? "[Meets]"
+                                                                      : chatList.data!.last.type == ChatType.project
+                                                                      ? "[Project]"
+                                                                      : chatList.data!.last.content!.length >= 24
+                                                                        ? chatList.data!.last.content!.substring(0, 24) + "..."
+                                                                        : chatList.data!.last.content
+                                                                    }",
+                                                                    fontSize: 14,
+                                                                    fontWeight: chatList.data!.last.readBy.indexOf(user.id) >= 0
+                                                                    ? FontWeight.w400
+                                                                    : FontWeight.w600,
+                                                                    textAlign: TextAlign.start,
+                                                                    color: chatList.data!.last.readBy.indexOf(user.id) >= 0
+                                                                    ? Colors.black.withOpacity(0.75)
+                                                                    : Colors.black
+                                                                  )
+                                                                : SizedBox();
+                                                              }
+                                                            ),
+                                                            trailing: Container(
+                                                              width: MQuery.width(0.08, context),
+                                                              child: Column(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                                children: [
+                                                                  Font.out(
+                                                                    DateFormat.jm().format(chatList.data!.last.timestamp),
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w400,
+                                                                    textAlign: TextAlign.start,
+                                                                    color: Colors.black.withOpacity(0.75)
+                                                                  ),
+                                                                  if (index >= 1)
+                                                                    SizedBox()
+                                                                  else Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0
+                                                                      ? Row(
+                                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            newMessages == 0
+                                                                            ? Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  shape: BoxShape.circle,
+                                                                                  color: Palette.secondary
+                                                                                ),
+                                                                                child: Center(
+                                                                                  child: Text(
+                                                                                    "$newMessages",
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 12,
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                      color: Colors.white
+                                                                                    ) 
+                                                                                  ),
+                                                                                ),
+                                                                                height: 22.5,
+                                                                                width: 22.5
+                                                                              )
+                                                                            : SizedBox(),
+                                                                            SizedBox(width: MQuery.width(0.01, context)),
+                                                                            AdaptiveIcon(
+                                                                              android: Icons.push_pin,
+                                                                              iOS: CupertinoIcons.pin_fill,
+                                                                              size: 20
+                                                                            ),
+                                                                          ],
+                                                                        )
+                                                                      : newMessages == 0
+                                                                        ? Container(
+                                                                            decoration: BoxDecoration(
+                                                                              shape: BoxShape.circle,
+                                                                              color: Palette.secondary
+                                                                            ),
+                                                                            child: Center(
+                                                                              child: Text(
+                                                                                "$newMessages",
+                                                                                textAlign: TextAlign.start,
+                                                                                style: TextStyle(
+                                                                                  fontSize: 12,
+                                                                                  fontWeight: FontWeight.w400,
+                                                                                  color: Colors.white
+                                                                                ) 
+                                                                              ),
+                                                                            ),
+                                                                            height: 22.5,
+                                                                            width: 22.5
+                                                                          )
+                                                                        : SizedBox(),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            )
+                                                          )
+                                                        : SizedBox();
+                                                      }
+                                                    );
+                                                },
+                                              )
+                                            ),
+                                          )
+                                          : SizedBox();
+                                        }
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            )
+                            : SizedBox(),
+                            isSearchActive
+                            ? SizedBox()
+                            : Expanded(
                               child: Column(
                                 children: [
-                                  StreamBuilder<List<HandlesModel>>(
-                                    stream: _handlesProvider.handlesModelSearcher(searchKey),
-                                    builder: (context, snapshot) {
-                                      return snapshot.hasData
-                                      ? Flexible(
-                                        child: Container(
-                                          child: ListView.builder(
-                                            itemCount: ((snapshot.data!.length / 100) + 1).round(),
-                                            itemBuilder: (context, index){
-                                              return StreamBuilder<List<ChatModel>>(
-                                                  stream: _chatProvider.handlesChats(snapshot.data![index].id),
+                                  (snapshot.data!.entitlements.all['pro'] != null && snapshot.data!.entitlements.all['pro']!.isActive == true) ||
+                                  (snapshot.data!.entitlements.all['pro_unlimited'] != null && snapshot.data!.entitlements.all['pro_unlimited']!.isActive == true)
+                                  ? SizedBox()
+                                  : SubscriptionBanner(),
+                                  Expanded(
+                                    flex: 6,
+                                    child: Container(
+                                      child: ListView.builder(
+                                        itemCount: user.handlesList!.length - 1,
+                                        itemBuilder: (context, index){
+                
+                                          final _singleHandlesProvider = watch(singleHandlesProvider(user.handlesList![index + 1]));
+                
+                                          return _singleHandlesProvider.when(
+                                            data: (handles){
+                                              return handles.archivedBy!.indexOf(user.id) >= 0
+                                              ? SizedBox()
+                                              : StreamBuilder<List<ChatModel>>(
+                                                  stream: _chatProvider.handlesChats(handles.id),
                                                   builder: (context, chatList) {
                                                     int newMessages = 0;
-
+                
                                                     if(chatList.hasData){
                                                       chatList.data!.forEach((element) {
                                                         if(element.readBy.indexOf(user.id) <= 0 && element.deletedBy.indexOf(user.id) <= 0){
@@ -398,7 +652,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                         onLongPress: (){
                                                           setState(() {
                                                             isHandlesSelected = true;
-                                                            if(snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0){
+                                                            if(handles.pinnedBy!.indexOf(user.id) >= 0){
                                                               selectedPinnedHandles.add(user.handlesList![index + 1]);
                                                             } else {
                                                               selectedHandles.add(user.handlesList![index + 1]);
@@ -407,7 +661,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                         },
                                                         onTap: (){
                                                           if(isHandlesSelected){
-                                                            if(snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0){
+                                                            if(handles.pinnedBy!.indexOf(user.id) >= 0){
                                                               if(selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) < 0){
                                                                 setState(() {
                                                                   selectedPinnedHandles.add(user.handlesList![index + 1]);
@@ -446,7 +700,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                             CircleAvatar(
                                                               backgroundColor: Palette.primary,
                                                               radius: MQuery.height(0.025, context),
-                                                              backgroundImage: NetworkImage(snapshot.data![index].cover)
+                                                              backgroundImage: NetworkImage(handles.cover)
                                                             ),
                                                             selectedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0 || selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0
                                                             ? ZoomIn(
@@ -463,7 +717,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                           ],
                                                         ),
                                                         title: Font.out(
-                                                          snapshot.data![index].name,
+                                                          handles.name,
                                                           fontSize: 16,
                                                           fontWeight: FontWeight.w500,
                                                           textAlign: TextAlign.start
@@ -526,7 +780,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                                 mainAxisAlignment: MainAxisAlignment.end,
                                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                                 children: [
-                                                                  snapshot.data![index].pinnedBy!.indexOf(user.id) >= 0
+                                                                  handles.pinnedBy!.indexOf(user.id) >= 0
                                                                   ? Row(
                                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                                       children: [
@@ -590,400 +844,165 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                   }
                                                 );
                                             },
-                                          )
-                                        ),
+                                            loading: () => SizedBox(),
+                                            error: (object, error){
+                                              print(error);
+                                              return SizedBox();
+                                            }
+                                          );
+                                        }
                                       )
-                                      : SizedBox();
-                                    }
+                                    ),
                                   ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Center(
+                                      child: GestureDetector(
+                                        onTap: (){
+                                          Get.to(() => ArchivedHandles(), transition: Transition.cupertino);
+                                        },
+                                        child: Text(
+                                          "Archived Handles",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            decoration: TextDecoration.underline,
+                                            fontSize: 16,
+                                            color: Palette.primary
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
-                        )
-                        : SizedBox(),
-                        isSearchActive
-                        ? SizedBox()
-                        : Expanded(
-                          child: Column(
-                            children: [
-                              SubscriptionBanner(),
-                              Expanded(
-                                flex: 6,
-                                child: Container(
-                                  child: ListView.builder(
-                                    itemCount: user.handlesList!.length - 1,
-                                    itemBuilder: (context, index){
-
-                                      final _singleHandlesProvider = watch(singleHandlesProvider(user.handlesList![index + 1]));
-
-                                      return _singleHandlesProvider.when(
-                                        data: (handles){
-                                          return handles.archivedBy!.indexOf(user.id) >= 0
-                                          ? SizedBox()
-                                          : StreamBuilder<List<ChatModel>>(
-                                              stream: _chatProvider.handlesChats(handles.id),
-                                              builder: (context, chatList) {
-                                                int newMessages = 0;
-
-                                                if(chatList.hasData){
-                                                  chatList.data!.forEach((element) {
-                                                    if(element.readBy.indexOf(user.id) <= 0 && element.deletedBy.indexOf(user.id) <= 0){
-                                                      newMessages++;
-                                                    }
-                                                  });
-                                                }
-                                                
-                                                return chatList.hasData && chatList.data!.isNotEmpty
-                                                ? ListTile(
-                                                    onLongPress: (){
-                                                      setState(() {
-                                                        isHandlesSelected = true;
-                                                        if(handles.pinnedBy!.indexOf(user.id) >= 0){
-                                                          selectedPinnedHandles.add(user.handlesList![index + 1]);
-                                                        } else {
-                                                          selectedHandles.add(user.handlesList![index + 1]);
-                                                        }
-                                                      });
-                                                    },
-                                                    onTap: (){
-                                                      if(isHandlesSelected){
-                                                        if(handles.pinnedBy!.indexOf(user.id) >= 0){
-                                                          if(selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) < 0){
-                                                            setState(() {
-                                                              selectedPinnedHandles.add(user.handlesList![index + 1]);
-                                                            });
-                                                          } else {
-                                                            setState(() {
-                                                              selectedPinnedHandles.remove(user.handlesList![index + 1]);
-                                                            });
-                                                          }
-                                                        } else {
-                                                          if(selectedHandles.toList().indexOf(user.handlesList![index + 1]) < 0){
-                                                            setState(() {
-                                                              selectedHandles.add(user.handlesList![index + 1]);
-                                                            });
-                                                          } else {
-                                                            setState(() {
-                                                              selectedHandles.remove(user.handlesList![index + 1]);
-                                                            });
-                                                          }
-                                                        }
-                                                      } else {
-                                                        Get.to(() => HandlesPage(
-                                                          handlesID: user.handlesList![index + 1]
-                                                        ), transition: Transition.cupertino);
-                                                      }
-                                                    },
-                                                    contentPadding: EdgeInsets.fromLTRB(
-                                                      MQuery.width(0.02, context),
-                                                      index >= 1 ? MQuery.height(0.005, context) : MQuery.height(0.01, context),
-                                                      MQuery.width(0.02, context),
-                                                      MQuery.height(0.005, context),
-                                                    ),
-                                                    leading: Stack(
-                                                      alignment: Alignment.bottomRight,
-                                                      children: [
-                                                        CircleAvatar(
-                                                          backgroundColor: Palette.primary,
-                                                          radius: MQuery.height(0.025, context),
-                                                          backgroundImage: NetworkImage(handles.cover)
-                                                        ),
-                                                        selectedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0 || selectedPinnedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0
-                                                        ? ZoomIn(
-                                                            duration: Duration(milliseconds: 100),
-                                                            child: Positioned(
-                                                              child: CircleAvatar(
-                                                                radius: 10,
-                                                                child: Icon(Icons.check, size: 12, color: Colors.white),
-                                                                backgroundColor: Palette.secondary
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : SizedBox()
-                                                      ],
-                                                    ),
-                                                    title: Font.out(
-                                                      handles.name,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w500,
-                                                      textAlign: TextAlign.start
-                                                    ),
-                                                    subtitle: FutureBuilder<UserModel>(
-                                                      future: _userProvider.getUserByID(chatList.data!.last.sender),
-                                                      builder: (context, snapshot) {
-                                                        return snapshot.hasData
-                                                        ? Font.out(
-                                                            "${snapshot.data!.id == chatList.data!.last.sender
-                                                                ? "You:"
-                                                                : snapshot.data!.name.split(" ").first + ":"
-                                                            } ${
-                                                              chatList.data!.last.type == ChatType.plain
-                                                              ? chatList.data!.last.content!.length >= 24
-                                                                ? chatList.data!.last.content!.substring(0, 24) + "..."
-                                                                : chatList.data!.last.content
-                                                              : chatList.data!.last.type == ChatType.image
-                                                              ? "[Image]"
-                                                              : chatList.data!.last.type == ChatType.video
-                                                              ? "[Video]"
-                                                              : chatList.data!.last.type == ChatType.docs
-                                                              ? "[Docs]"
-                                                              : chatList.data!.last.type == ChatType.meets
-                                                              ? "[Meets]"
-                                                              : chatList.data!.last.type == ChatType.project
-                                                              ? "[Project]"
-                                                              : chatList.data!.last.content!.length >= 24
-                                                                ? chatList.data!.last.content!.substring(0, 24) + "..."
-                                                                : chatList.data!.last.content
-                                                            }",
-                                                            fontSize: 14,
-                                                            fontWeight: chatList.data!.last.readBy.indexOf(user.id) >= 0
-                                                            ? FontWeight.w400
-                                                            : FontWeight.w600,
-                                                            textAlign: TextAlign.start,
-                                                            color: chatList.data!.last.readBy.indexOf(user.id) >= 0
-                                                            ? Colors.black.withOpacity(0.75)
-                                                            : Colors.black
-                                                          )
-                                                        : SizedBox();
-                                                      }
-                                                    ),
-                                                    trailing: Container(
-                                                      width: MQuery.width(0.08, context),
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: [
-                                                          Font.out(
-                                                            DateFormat.jm().format(chatList.data!.last.timestamp),
-                                                            fontSize: 12,
-                                                            fontWeight: FontWeight.w400,
-                                                            textAlign: TextAlign.start,
-                                                            color: Colors.black.withOpacity(0.75)
-                                                          ),
-                                                          if (index >= 1)
-                                                            SizedBox()
-                                                          else Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              handles.pinnedBy!.indexOf(user.id) >= 0
-                                                              ? Row(
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    newMessages == 0
-                                                                    ? Container(
-                                                                        decoration: BoxDecoration(
-                                                                          shape: BoxShape.circle,
-                                                                          color: Palette.secondary
-                                                                        ),
-                                                                        child: Center(
-                                                                          child: Text(
-                                                                            "$newMessages",
-                                                                            textAlign: TextAlign.start,
-                                                                            style: TextStyle(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w400,
-                                                                              color: Colors.white
-                                                                            ) 
-                                                                          ),
-                                                                        ),
-                                                                        height: 22.5,
-                                                                        width: 22.5
-                                                                      )
-                                                                    : SizedBox(),
-                                                                    SizedBox(width: MQuery.width(0.01, context)),
-                                                                    AdaptiveIcon(
-                                                                      android: Icons.push_pin,
-                                                                      iOS: CupertinoIcons.pin_fill,
-                                                                      size: 20
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              : newMessages == 0
-                                                                ? Container(
-                                                                    decoration: BoxDecoration(
-                                                                      shape: BoxShape.circle,
-                                                                      color: Palette.secondary
-                                                                    ),
-                                                                    child: Center(
-                                                                      child: Text(
-                                                                        "$newMessages",
-                                                                        textAlign: TextAlign.start,
-                                                                        style: TextStyle(
-                                                                          fontSize: 12,
-                                                                          fontWeight: FontWeight.w400,
-                                                                          color: Colors.white
-                                                                        ) 
-                                                                      ),
-                                                                    ),
-                                                                    height: 22.5,
-                                                                    width: 22.5
-                                                                  )
-                                                                : SizedBox(),
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  )
-                                                : SizedBox();
-                                              }
-                                            );
-                                        },
-                                        loading: () => SizedBox(),
-                                        error: (object, error){
-                                          print(error);
-                                          return SizedBox();
-                                        }
-                                      );
-                                    }
-                                  )
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Center(
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      Get.to(() => ArchivedHandles(), transition: Transition.cupertino);
-                                    },
-                                    child: Text(
-                                      "Archived Handles",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        decoration: TextDecoration.underline,
-                                        fontSize: 16,
-                                        color: Palette.primary
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                    
-
-                    //
-                    ///-CALL PAGE-//
-                    //
-
-
-                    user.handlesList!.isEmpty
-                    ? EmptyHandles(isHandlesPage: false)
-                    : watch(filteredCallProvider).when(
-                        data: (callLogs){
-                          return ListView.builder(
-                            itemCount: callLogs.length,
-                            itemBuilder: (context, index){
-                              return Column(
-                                children: [
-                                  StreamBuilder<HandlesModel>(
-                                    stream: _handlesProvider.handlesModelGetter(callLogs[index].handlesUID!),
-                                    builder: (context, snapshot) {
-                                      return snapshot.hasData
-                                      ? ListTile(
-                                          onTap: (){
-                                            if(isHandlesSelected){
-                                            } else {
-                                              Get.to(() => DetailedCallPage(
-                                                callModel: callLogs[index],
-                                                handlesModel: snapshot.data!,
-                                              ), transition: Transition.cupertino);
-                                            }
-                                          },
-                                          contentPadding: EdgeInsets.fromLTRB(
-                                            MQuery.width(0.02, context),
-                                            index >= 1 ? 0 : MQuery.height(0.01, context),
-                                            MQuery.width(0.01, context),
-                                            0,
-                                          ),
-                                          leading: Stack(
-                                            alignment: Alignment.bottomRight,
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundColor: Palette.primary,
-                                                radius: MQuery.height(0.025, context),
-                                                backgroundImage: NetworkImage(snapshot.data!.cover)
+                        
+                
+                        //
+                        ///-CALL PAGE-//
+                        //
+                
+                
+                        user.handlesList!.isEmpty
+                        ? EmptyHandles(isHandlesPage: false)
+                        : watch(filteredCallProvider).when(
+                            data: (callLogs){
+                              return ListView.builder(
+                                itemCount: callLogs.length,
+                                itemBuilder: (context, index){
+                                  return Column(
+                                    children: [
+                                      StreamBuilder<HandlesModel>(
+                                        stream: _handlesProvider.handlesModelGetter(callLogs[index].handlesUID!),
+                                        builder: (context, snapshot) {
+                                          return snapshot.hasData
+                                          ? ListTile(
+                                              onTap: (){
+                                                if(isHandlesSelected){
+                                                } else {
+                                                  Get.to(() => DetailedCallPage(
+                                                    callModel: callLogs[index],
+                                                    handlesModel: snapshot.data!,
+                                                  ), transition: Transition.cupertino);
+                                                }
+                                              },
+                                              contentPadding: EdgeInsets.fromLTRB(
+                                                MQuery.width(0.02, context),
+                                                index >= 1 ? 0 : MQuery.height(0.01, context),
+                                                MQuery.width(0.01, context),
+                                                0,
                                               ),
-                                            ],
-                                          ),
-                                          title: Font.out(
-                                            snapshot.data!.name,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            textAlign: TextAlign.start
-                                          ),
-                                          subtitle: StreamBuilder<UserModel>(
-                                            stream: _userProvider.getCurrentUser,
-                                            builder: (context, snapshot) {
-                                              return snapshot.hasData
-                                              ? Row(
-                                                  children: [
-                                                    callLogs[index].participants.first == snapshot.data!.id
-                                                    ? AdaptiveIcon(
-                                                        android: Icons.call_made,
-                                                        iOS: CupertinoIcons.phone_fill_arrow_down_left,
-                                                        size: 14,
-                                                        color: Palette.secondary,
-                                                      )
-                                                    : callLogs[index].participants.first != snapshot.data!.id && callLogs[index].participants.indexOf(snapshot.data!.id) >= 0
-                                                      ? AdaptiveIcon(
-                                                          android: Icons.call_received,
-                                                          iOS: CupertinoIcons.phone_fill_arrow_up_right,
-                                                          size: 14,
-                                                          color: Palette.primary,
-                                                        )
-                                                      : AdaptiveIcon(
-                                                          android: Icons.call_missed,
-                                                          iOS: CupertinoIcons.phone_fill_arrow_up_right,
-                                                          size: 14,
-                                                          color: Palette.warning,
+                                              leading: Stack(
+                                                alignment: Alignment.bottomRight,
+                                                children: [
+                                                  CircleAvatar(
+                                                    backgroundColor: Palette.primary,
+                                                    radius: MQuery.height(0.025, context),
+                                                    backgroundImage: NetworkImage(snapshot.data!.cover)
+                                                  ),
+                                                ],
+                                              ),
+                                              title: Font.out(
+                                                snapshot.data!.name,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                textAlign: TextAlign.start
+                                              ),
+                                              subtitle: StreamBuilder<UserModel>(
+                                                stream: _userProvider.getCurrentUser,
+                                                builder: (context, snapshot) {
+                                                  return snapshot.hasData
+                                                  ? Row(
+                                                      children: [
+                                                        callLogs[index].participants.first == snapshot.data!.id
+                                                        ? AdaptiveIcon(
+                                                            android: Icons.call_made,
+                                                            iOS: CupertinoIcons.phone_fill_arrow_down_left,
+                                                            size: 14,
+                                                            color: Palette.secondary,
+                                                          )
+                                                        : callLogs[index].participants.first != snapshot.data!.id && callLogs[index].participants.indexOf(snapshot.data!.id) >= 0
+                                                          ? AdaptiveIcon(
+                                                              android: Icons.call_received,
+                                                              iOS: CupertinoIcons.phone_fill_arrow_up_right,
+                                                              size: 14,
+                                                              color: Palette.primary,
+                                                            )
+                                                          : AdaptiveIcon(
+                                                              android: Icons.call_missed,
+                                                              iOS: CupertinoIcons.phone_fill_arrow_up_right,
+                                                              size: 14,
+                                                              color: Palette.warning,
+                                                            ),
+                                                        SizedBox(width: MQuery.width(0.0075, context)),
+                                                        Font.out(
+                                                          "${DateFormat.yMd().format(callLogs[index].startTime!)}, ${DateFormat.Hm().format(callLogs[index].startTime!)}",
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w400,
+                                                          textAlign: TextAlign.start,
+                                                          color: Colors.black.withOpacity(0.75)
                                                         ),
-                                                    SizedBox(width: MQuery.width(0.0075, context)),
-                                                    Font.out(
-                                                      "${DateFormat.yMd().format(callLogs[index].startTime!)}, ${DateFormat.Hm().format(callLogs[index].startTime!)}",
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
-                                                      textAlign: TextAlign.start,
-                                                      color: Colors.black.withOpacity(0.75)
-                                                    ),
-                                                  ],
-                                                )
-                                              : SizedBox();
-                                            }
-                                          ),
-                                          trailing: IconButton(
-                                            onPressed: (){
-                                              Get.to(() => HandlesPage(handlesID: snapshot.data!.id));
-                                            },
-                                            icon: AdaptiveIcon(
-                                              android: Icons.call,
-                                              iOS: CupertinoIcons.phone_fill,
-                                              color: Palette.primary,
-                                            ),
-                                          )
-                                        )
-                                      : SizedBox();
-                                    }
-                                  ),
-                                  Divider(),
-                                ],
+                                                      ],
+                                                    )
+                                                  : SizedBox();
+                                                }
+                                              ),
+                                              trailing: IconButton(
+                                                onPressed: (){
+                                                  Get.to(() => HandlesPage(handlesID: snapshot.data!.id));
+                                                },
+                                                icon: AdaptiveIcon(
+                                                  android: Icons.call,
+                                                  iOS: CupertinoIcons.phone_fill,
+                                                  color: Palette.primary,
+                                                ),
+                                              )
+                                            )
+                                          : SizedBox();
+                                        }
+                                      ),
+                                      Divider(),
+                                    ],
+                                  );
+                                }
                               );
+                            },
+                            loading: (){
+                              return SizedBox();
+                            },
+                            error: (error, object){
+                              print(error);
+                              return SizedBox();
                             }
-                          );
-                        },
-                        loading: (){
-                          return SizedBox();
-                        },
-                        error: (error, object){
-                          print(error);
-                          return SizedBox();
-                        }
+                        )
+                      ],
                     )
-                  ],
+                    : Center(
+                      child: CircularProgressIndicator(color: Palette.primary)
+                    );
+                  }
                 );
               },
               loading: (){

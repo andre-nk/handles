@@ -8,7 +8,8 @@ class PurchasesServices with ChangeNotifier{
     await Purchases.setup(_apiKey);
   }
 
-  void fetchOffers() async {
-    
+  Future<PurchaserInfo> getPurchaserInfo() async{
+    PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
+    return purchaserInfo;
   }
 }

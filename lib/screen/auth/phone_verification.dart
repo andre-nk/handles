@@ -2,7 +2,6 @@ part of "../pages.dart";
 
 enum PhoneVerificationType { creation, update, deletion }
 
-=======
 class PhoneVerificationPage extends StatefulWidget {
   final PhoneVerificationType verificationStatus;
   final String phoneNumber;
