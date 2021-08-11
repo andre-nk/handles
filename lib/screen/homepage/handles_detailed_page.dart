@@ -43,6 +43,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
               body: CustomScrollView(
                 slivers: <Widget>[
                   SliverAppBar(
+              centerTitle: false,
                     expandedHeight: 250.0,
                     leadingWidth: MQuery.width(0.05, context),
                     leading: IconButton(
@@ -89,7 +90,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                               IconButton(
                                 icon: AdaptiveIcon(
                                   android: Icons.delete,
-                                  iOS: CupertinoIcons.trash,
+                                  iOS: CupertinoIcons.trash_fill,
                                 ),
                                 onPressed: (){
                                   Get.dialog(

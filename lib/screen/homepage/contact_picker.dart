@@ -45,6 +45,7 @@ class _ContactPickerState extends State<ContactPicker> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
+              centerTitle: false,
             leading: IconButton(
               icon:  AdaptiveIcon(
                 android: Icons.close,

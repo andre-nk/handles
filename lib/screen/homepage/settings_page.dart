@@ -66,6 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
             return snapshot.hasData
             ? Scaffold(
                 appBar: AppBar(
+              centerTitle: false,
                   toolbarHeight: MQuery.height(0.07, context),
                   leading: IconButton(
                     icon: AdaptiveIcon(
@@ -227,7 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               leading: AdaptiveIcon(
                                 android: Icons.credit_card,
-                                iOS: CupertinoIcons.creditcard,
+                                iOS: CupertinoIcons.creditcard_fill,
                                 color: Palette.primary
                               ),
                               title: Text(
@@ -247,7 +248,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               leading: AdaptiveIcon(
                                 android: Icons.notifications,
-                                iOS: CupertinoIcons.bell,
+                                iOS: CupertinoIcons.bell_fill,
                                 color: Palette.primary
                               ),
                               title: Text(
@@ -387,7 +388,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               leading: AdaptiveIcon(
                                 android: Icons.delete,
-                                iOS: CupertinoIcons.trash,
+                                iOS: CupertinoIcons.trash_fill,
                                 color: Palette.warning
                               ),
                               title: Text(
@@ -474,6 +475,7 @@ class _PhoneNumberUpdateDialogState extends State<PhoneNumberUpdateDialog> {
                     children: [
                       CountryListPick(
                         appBar: AppBar(
+              centerTitle: false,
                           backgroundColor: Colors.blue,
                           title: Text('Choose your country code'),
                         ),

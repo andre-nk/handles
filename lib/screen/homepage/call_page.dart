@@ -68,6 +68,7 @@ class _CallPageState extends State<CallPage> {
 
         return Scaffold(
           appBar: AppBar(
+              centerTitle: false,
             elevation: 0,
             backgroundColor: Palette.primary,
             leadingWidth: MQuery.width(0, context),

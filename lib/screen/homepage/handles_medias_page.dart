@@ -203,6 +203,7 @@ class _HandlesMediasPageState extends State<HandlesMediasPage>
               data: (handles) {
                 return Scaffold(
                   appBar: AppBar(
+              centerTitle: false,
                     backgroundColor: Palette.primary,
                     leading: IconButton(
                       icon: AdaptiveIcon(
@@ -1233,8 +1234,10 @@ class _HandlesMediasPageState extends State<HandlesMediasPage>
                   ),
                 );
               },
-              loading: () => AppBar(),
-              error: (_, __) => AppBar(),
+              loading: () => AppBar(
+              centerTitle: false,),
+              error: (_, __) => AppBar(
+              centerTitle: false,),
             );
           }),
         ));

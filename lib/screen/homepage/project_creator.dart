@@ -64,6 +64,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
             return Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(
+              centerTitle: false,
                 elevation: 0,
                 backgroundColor: Palette.primary,
                 toolbarHeight: MQuery.height(0.07, context),
@@ -90,7 +91,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                   ? IconButton(
                     icon: AdaptiveIcon(
                       android: Icons.delete,
-                      iOS: CupertinoIcons.trash,
+                      iOS: CupertinoIcons.trash_fill,
                     ),
                     onPressed: (){
                       Get.dialog(

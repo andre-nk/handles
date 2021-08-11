@@ -107,6 +107,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
         return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+              centerTitle: false,
               elevation: 0,
               backgroundColor: Palette.primary,
               toolbarHeight: MQuery.height(0.07, context),

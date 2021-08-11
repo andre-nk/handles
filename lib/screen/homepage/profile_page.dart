@@ -129,6 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return snapshot.hasData
                   ? Scaffold(
                       appBar: AppBar(
+              centerTitle: false,
                           toolbarHeight: MQuery.height(0.07, context),
                           elevation: 0,
                           backgroundColor: Colors.transparent,

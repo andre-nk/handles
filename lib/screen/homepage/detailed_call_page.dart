@@ -11,6 +11,7 @@ class DetailedCallPage extends ConsumerWidget {
   Widget build(BuildContext context, watch) {
     return Scaffold(
       appBar: AppBar(
+              centerTitle: false,
         toolbarHeight: MQuery.height(0.07, context),
         leading: IconButton(
           icon: AdaptiveIcon(
@@ -32,7 +33,7 @@ class DetailedCallPage extends ConsumerWidget {
           // IconButton(
           //   icon: AdaptiveIcon(
           //     android: Icons.delete,
-          //     iOS: CupertinoIcons.trash,
+          //     iOS: CupertinoIcons.trash_fill,
           //   ),
           //   onPressed: (){
           //     showDialog(

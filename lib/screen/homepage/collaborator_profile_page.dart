@@ -23,6 +23,7 @@ class _CollaboratorProfilePageState extends State<CollaboratorProfilePage> {
             return snapshot.hasData
             ? Scaffold(
                 appBar: AppBar(
+              centerTitle: false,
                   toolbarHeight: MQuery.height(0.07, context),
                   elevation: 0,
                   backgroundColor: Colors.transparent,

@@ -67,6 +67,7 @@ class _PreviewVideosPageState extends State<PreviewVideosPage> {
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.black,
               appBar: AppBar(
+              centerTitle: false,
                 backgroundColor: Colors.black.withOpacity(0.5),
                 toolbarHeight: MQuery.height(0.07, context),
                 leading: IconButton(

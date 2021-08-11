@@ -103,6 +103,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
             return Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(
+              centerTitle: false,
                 elevation: 0,
                 backgroundColor: Palette.primary,
                 toolbarHeight: MQuery.height(0.07, context),
@@ -129,7 +130,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                   ? IconButton(
                     icon: AdaptiveIcon(
                       android: Icons.delete,
-                      iOS: CupertinoIcons.trash,
+                      iOS: CupertinoIcons.trash_fill,
                     ),
                     onPressed: (){
                       Get.dialog(

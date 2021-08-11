@@ -102,6 +102,7 @@ class _PickVideosPageState extends State<PickVideosPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+              centerTitle: false,
           leading: IconButton(
             icon:  AdaptiveIcon(
               android: Icons.close,

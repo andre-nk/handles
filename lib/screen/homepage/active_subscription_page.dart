@@ -12,6 +12,7 @@ class _ActiveSubscriptionPageState extends State<ActiveSubscriptionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+              centerTitle: false,
         toolbarHeight: MQuery.height(0.07, context),
         elevation: 0,
         backgroundColor: Colors.transparent,

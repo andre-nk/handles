@@ -161,6 +161,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               },
             ),
             appBar: AppBar(
+              centerTitle: false,
               elevation: isSearchActive ? 0 : 2.5,
               backgroundColor: Palette.primary,
               toolbarHeight: isSearchActive ? MQuery.height(0.07, context) : MQuery.height(0.125, context),
@@ -245,7 +246,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                           IconButton(
                             icon: AdaptiveIcon(
                               android: Icons.delete,
-                              iOS: CupertinoIcons.trash,
+                              iOS: CupertinoIcons.trash_fill,
                             ),
                             onPressed: (){
                               showDialog(
@@ -407,7 +408,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                             tooltip: "Settings",
                             icon: AdaptiveIcon(
                               android: Icons.more_vert_rounded,
-                              iOS: CupertinoIcons.ellipsis,
+                              iOS: CupertinoIcons.ellipsis_vertical,
                             ),
                             onPressed: (){
                               Get.to(() => SettingsPage(), transition: Transition.cupertino);

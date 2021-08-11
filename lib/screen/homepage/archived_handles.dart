@@ -24,6 +24,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
           data: (user){
             return Scaffold(
               appBar: AppBar(
+              centerTitle: false,
                 toolbarHeight: MQuery.height(0.07, context),
                 leading: IconButton(
                   icon: AdaptiveIcon(
@@ -167,7 +168,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                                               setState(() {
                                                 selectedHandles = Set();
                                               });
-                                              Get.back();
+                                              Get.offAll(Homepage());
                                             },
                                           )
                                         ],
@@ -205,6 +206,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                                               setState(() {
                                                 selectedHandles = Set();
                                               });
+                                              Get.offAll(Homepage());
                                             },
                                           )
                                         ],
@@ -218,7 +220,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                         IconButton(
                           icon: AdaptiveIcon(
                             android: Icons.delete,
-                            iOS: CupertinoIcons.trash,
+                            iOS: CupertinoIcons.trash_fill,
                           ),
                           onPressed: (){
                             showDialog(

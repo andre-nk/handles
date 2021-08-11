@@ -54,6 +54,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                   children: [
                     CountryListPick(
                       appBar: AppBar(
+              centerTitle: false,
                         backgroundColor: Colors.blue,
                         title: Text('Choose your country code'),
                       ),

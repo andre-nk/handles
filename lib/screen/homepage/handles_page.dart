@@ -127,6 +127,7 @@ class _HandlesPageState extends State<HandlesPage> {
                 return Scaffold(
                   backgroundColor: Palette.handlesBackground,
                   appBar: AppBar(
+              centerTitle: false,
                     elevation: isSearchActive ? 0 : 1,
                     toolbarHeight: MQuery.height(0.075, context),
                     leadingWidth: !isChatSelected 
@@ -380,7 +381,7 @@ class _HandlesPageState extends State<HandlesPage> {
                                     tooltip: "Delete Message",
                                     icon: AdaptiveIcon(
                                       android: Icons.delete,
-                                      iOS: CupertinoIcons.trash,
+                                      iOS: CupertinoIcons.trash_fill,
                                     ),
                                     onPressed: (){
                                       selectedChatIndex.forEach((element) {

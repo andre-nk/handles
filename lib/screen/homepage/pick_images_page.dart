@@ -85,6 +85,7 @@ class _PickImagesPageState extends State<PickImagesPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+              centerTitle: false,
           leading: IconButton(
             icon:  AdaptiveIcon(
               android: Icons.close,

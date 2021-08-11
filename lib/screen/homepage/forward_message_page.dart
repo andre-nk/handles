@@ -30,6 +30,7 @@ class _ForwardMessagePageState extends State<ForwardMessagePage> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
+              centerTitle: false,
             leading: IconButton(
               icon:  AdaptiveIcon(
                 android: Icons.close,

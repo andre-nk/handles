@@ -21,10 +21,10 @@
           "adHocOffers" : [
 
           ],
-          "displayPrice" : "29.99",
-          "familyShareable" : true,
+          "displayPrice" : "14.99",
+          "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "64005AFC",
+          "internalID" : "8A576D8D",
           "introductoryOffer" : null,
           "localizations" : [
             {
@@ -33,9 +33,31 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "mw_300_1y_1w0",
+          "productID" : "handles_1499_1m",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "monthly free trial",
+          "referenceName" : "Handles Pro",
+          "subscriptionGroupID" : "65FE0BFE",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "E70612D7",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "handles_2999_1m",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Handles Pro Unlimited",
           "subscriptionGroupID" : "65FE0BFE",
           "type" : "RecurringSubscription"
         }

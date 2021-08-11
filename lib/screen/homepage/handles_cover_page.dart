@@ -99,6 +99,7 @@ class _HandlesCoverPageState extends State<HandlesCoverPage> {
         return Scaffold(
             backgroundColor: Colors.black,
             appBar: AppBar(
+              centerTitle: false,
                 backgroundColor: Colors.black.withOpacity(0.5),
                 toolbarHeight: MQuery.height(0.07, context),
                 leading: IconButton(
