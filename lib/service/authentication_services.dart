@@ -102,6 +102,7 @@ class AuthenticationService with ChangeNotifier{
               "companyLogo": user.companyLogo,
               "creditCard": user.creditCard,
               "handlesList": user.handlesList,
+              "createdHandles": []
             });
           } else {
             await firestore

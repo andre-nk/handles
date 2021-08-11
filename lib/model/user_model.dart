@@ -12,6 +12,7 @@ class UserModel{
   String? companyLogo;
   String? creditCard;
   List<String>? handlesList;
+  List<String>? createdHandles;
 
   UserModel({
     required this.id,
@@ -25,5 +26,6 @@ class UserModel{
     this.companyAddress,
     this.creditCard,
     this.handlesList,
+    this.createdHandles
   });
 }

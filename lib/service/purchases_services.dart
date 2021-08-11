@@ -9,6 +9,7 @@ class PurchasesServices with ChangeNotifier{
   }
 
   Future<PurchaserInfo> getPurchaserInfo() async{
+    await init();
     PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
     return purchaserInfo;
   }

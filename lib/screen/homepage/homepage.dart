@@ -69,7 +69,90 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               onPressed: () async {
                 _purchasesProvider.getPurchaserInfo().then((value){
-                  if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true) || (value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
+                  if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true)){
+                    _currentUserProvider.whenData((user){
+                      if(user.createdHandles!.length < 5){
+                        Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context){
+                            return Platform.isAndroid
+                            ? AlertDialog(
+                                title: Text(
+                                  "You have created 5 Handles!",
+                                ),
+                                content: Text(
+                                  'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text("CANCEL"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.warning,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("SUBSCRIBE"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.primary,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                      Get.to(() => SubscriptionPage());
+                                    },
+                                  )
+                                ],
+                              )
+                            : CupertinoAlertDialog(
+                                title: Text(
+                                  "You have created 5 Handles!",
+                                ),
+                                content: Text(
+                                  'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text("CANCEL"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.warning,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("SUBSCRIBE"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.primary,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                      Get.to(() => SubscriptionPage());
+                                    },
+                                  )
+                                ],
+                              );
+                          }
+                        );
+                      }
+                    });
+                  } else if ((value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
                     Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
                   } else {
                     Get.to(() => SubscriptionPage(), transition: Transition.cupertino);
@@ -284,15 +367,6 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                               setState(() {
                                 selectedHandles = Set();
                               });
-                              Fluttertoast.showToast(
-                                msg: "${selectedHandles.length} archived",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                              );
                             }
                           ),
                         ],

@@ -43,6 +43,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             try {
               offerings = await Purchases.getOfferings();
             } on PlatformException catch (e) {
+              print(e);
               await showDialog(
                 context: context,
                 builder: (BuildContext context) => ShowDialogToDismiss(
@@ -84,8 +85,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             future: displayProducts(),
             builder: (context, snapshot){
 
-              print(snapshot.data);
-
+              print("Snapshots: ${snapshot.data}");
+  
               return snapshot.hasData
               ? SingleChildScrollView(
                   child: Container(

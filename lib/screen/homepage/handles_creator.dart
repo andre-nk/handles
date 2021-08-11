@@ -347,61 +347,47 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                                     errorLocation = FormError.title;
                                   });
                                 } else if (_image == null &&
-                                    membersList.length >= 2) {
-                                  Map<String, String> membersMap = {};
-                                  for (var i = 0; i < membersList.length; i++) {
-                                    membersMap[membersList.toList()[i].id] =
-                                        rolesList.toList()[i];
+                                  membersList.length >= 2) {
+                                    Map<String, String> membersMap = {};
+                                    for (var i = 0; i < membersList.length; i++) {
+                                      membersMap[membersList.toList()[i].id] = rolesList.toList()[i];
                                   }
 
                                   print(membersMap);
 
-                                  _handlesProvider.createHandles(HandlesModel(
+                                  _handlesProvider.createHandles(
+                                    HandlesModel(
                                       id: Uuid().v4(),
                                       cover: "",
                                       members: membersMap,
                                       description: descriptionController.text,
                                       name: titleController.text,
-                                      pinnedBy: [""]));
+                                      pinnedBy: [""]
+                                    )
+                                  );
 
                                   Get.back();
                                 } else if (_image != null &&
-                                    membersList.length >= 2) {
-                                  Map<String, String> membersMap = {};
-                                  for (var i = 0; i < membersList.length; i++) {
-                                    membersMap[membersList.toList()[i].id] =
-                                        rolesList.toList()[i];
+                                  membersList.length >= 2) {
+                                    Map<String, String> membersMap = {};
+                                    for (var i = 0; i < membersList.length; i++) {
+                                      membersMap[membersList.toList()[i].id] =
+                                          rolesList.toList()[i];
                                   }
 
-                                  print(membersMap);
-
-                                  _handlesProvider
-                                      .uploadHandlesCover(
-                                          _image!.path, titleController.text)
-                                      .then((value) {
+                                  _handlesProvider.uploadHandlesCover(_image!.path, titleController.text).then((value) {
                                     if (value != null) {
-                                      HandlesModel model = HandlesModel(
+                                      _handlesProvider.createHandles(
+                                        HandlesModel(
                                           id: Uuid().v4(),
                                           cover: value,
                                           members: membersMap,
-                                          description:
-                                              descriptionController.text,
+                                          description: descriptionController.text,
                                           name: titleController.text,
                                           pinnedBy: [""],
-                                          archivedBy: [""]);
-
-                                      print(model.id);
-
-                                      _handlesProvider.createHandles(
-                                          HandlesModel(
-                                              id: Uuid().v4(),
-                                              cover: value,
-                                              members: membersMap,
-                                              description:
-                                                  descriptionController.text,
-                                              name: titleController.text,
-                                              pinnedBy: [""],
-                                              archivedBy: [""]));
+                                          archivedBy: [""]
+                                        )
+                                      );
                                       Get.back();
                                     }
                                   });

@@ -153,7 +153,6 @@ class _ActiveSubscriptionPageState extends State<ActiveSubscriptionPage> {
                               ],
                             ),
                             Text(
-                              //TODO: INTL LOCAL CURRENCY HERE
                               "\$19.99/mo",
                               textAlign: TextAlign.start,
                               style: TextStyle(

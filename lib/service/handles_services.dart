@@ -44,6 +44,21 @@ class HandlesServices with ChangeNotifier{
     print(handlesModel.id);
 
     await firestore
+    .collection('users')
+    .doc(auth.currentUser!.uid)
+    .get().then((value){
+      List<String> oldCreatedHandles = (value['createdHandles'] as List<dynamic>).cast<String>();
+      oldCreatedHandles.add(handlesModel.id);
+
+      firestore
+      .collection('users')
+      .doc(auth.currentUser!.uid)
+      .update({
+        'createdHandles': oldCreatedHandles
+      });
+    });
+
+    await firestore
       .collection('handles')
       .doc(handlesModel.id)
       .set({
@@ -93,8 +108,23 @@ class HandlesServices with ChangeNotifier{
   }
 
   Future<void> deleteHandles(List<String> selectedHandles) async{
-    selectedHandles.forEach((targetHandlesUID) {
-      firestore
+    selectedHandles.forEach((targetHandlesUID) async {
+      await firestore
+      .collection('users')
+      .doc(auth.currentUser!.uid)
+      .get().then((value){
+        List<String> oldCreatedHandles = (value['createdHandles'] as List<dynamic>).cast<String>();
+        oldCreatedHandles.remove(targetHandlesUID);
+
+        firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .update({
+          'createdHandles': oldCreatedHandles
+        });
+      });     
+
+      await firestore
       .collection("handles")
       .doc(targetHandlesUID)
       .get().then((value){
@@ -166,8 +196,23 @@ class HandlesServices with ChangeNotifier{
   }
 
   Future<void> archiveHandles(List<String> handlesList) async {
-    return handlesList.forEach((uid) {
-      firestore
+    return handlesList.forEach((uid) async {
+      await firestore
+      .collection('users')
+      .doc(auth.currentUser!.uid)
+      .get().then((value){
+        List<String> oldCreatedHandles = (value['createdHandles'] as List<dynamic>).cast<String>();
+        oldCreatedHandles.remove(uid);
+
+        firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .update({
+          'createdHandles': oldCreatedHandles
+        });
+      });
+
+      await firestore
       .collection("handles")
       .doc(uid)
       .get().then((value){
@@ -204,8 +249,23 @@ class HandlesServices with ChangeNotifier{
   }
 
   Future<void> unarchiveHandles(List<String> handlesList) async {
-    return handlesList.forEach((uid) {
-      firestore
+    return handlesList.forEach((uid) async {
+      await firestore
+      .collection('users')
+      .doc(auth.currentUser!.uid)
+      .get().then((value){
+        List<String> oldCreatedHandles = (value['createdHandles'] as List<dynamic>).cast<String>();
+        oldCreatedHandles.add(uid);
+
+        firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .update({
+          'createdHandles': oldCreatedHandles
+        });
+      });
+
+      await firestore
       .collection("handles")
       .doc(uid)
       .get().then((value){

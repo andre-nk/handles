@@ -192,9 +192,25 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
                       });
                     }
                   } else {
-                    setState(() {
-                      isError = true;
-                    });
+                    if (_authenticationProvider.auth.currentUser != null) {
+                      _authenticationProvider.createUserRecord(
+                        UserModel(
+                          id: _authenticationProvider.auth.currentUser!.uid,
+                          name: nameController.text,
+                          profilePicture: "https://firebasestorage.googleapis.com/v0/b/handles-ad2a9.appspot.com/o/sample_profile.png?alt=media&token=e9ad3cf8-41e3-462c-ac7b-dad289f3b7d1",
+                          phoneNumber: _authenticationProvider.auth.currentUser!.phoneNumber ??"",
+                          countryCode: _authenticationProvider
+                            .auth.currentUser!.phoneNumber!
+                            .substring(0, 3),
+                          role: "",
+                          company: "",
+                          companyAddress: "",
+                          companyLogo: "",
+                          creditCard: "",
+                          handlesList: [""],
+                        )
+                      );
+                    }
                   }
                 },
                 textColor: Colors.white,
