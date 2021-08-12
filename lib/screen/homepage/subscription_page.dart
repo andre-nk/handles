@@ -68,7 +68,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
         return Scaffold(
           appBar: AppBar(
-              centerTitle: false,
+            centerTitle: false,
             toolbarHeight: MQuery.height(0.07, context),
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -86,7 +86,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             future: displayProducts(),
             builder: (context, snapshot){
 
-              print("Snapshots: ${snapshot.data}");
+              print(snapshot.hasData);
   
               return snapshot.hasData
               ? SingleChildScrollView(
@@ -204,7 +204,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (context, index){
                                     return Container(
-                                      height: MQuery.height(0.19, context),
+                                      height: MQuery.height(0.16, context),
                                       child: Column(
                                         children: [
                                           SizedBox(height: MQuery.height(0.02, context)),
@@ -286,7 +286,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                                   ),
                                                   SizedBox(height: MQuery.height(0.02, context)),
                                                   Text(
-                                                    snapshot.data![index].product.description,
+                                                    snapshot.data![index].product.description.replaceAll("\n", ""),
                                                     style: TextStyle(
                                                       height: 1.5,
                                                       color: HexColor("00BFA5"),

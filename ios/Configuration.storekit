@@ -1,5 +1,5 @@
 {
-  "identifier" : "F8335942",
+  "identifier" : "3FA62240",
   "nonRenewingSubscriptions" : [
 
   ],
@@ -11,11 +11,11 @@
   },
   "subscriptionGroups" : [
     {
-      "id" : "65FE0BFE",
+      "id" : "6CB55688",
       "localizations" : [
 
       ],
-      "name" : "subscription_group",
+      "name" : "Handles Pro",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -24,7 +24,7 @@
           "displayPrice" : "14.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "8A576D8D",
+          "internalID" : "ACC068FF",
           "introductoryOffer" : null,
           "localizations" : [
             {
@@ -36,7 +36,7 @@
           "productID" : "handles_1499_1m",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Handles Pro",
-          "subscriptionGroupID" : "65FE0BFE",
+          "subscriptionGroupID" : "6CB55688",
           "type" : "RecurringSubscription"
         },
         {
@@ -46,7 +46,7 @@
           "displayPrice" : "29.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "E70612D7",
+          "internalID" : "53A1A8AB",
           "introductoryOffer" : null,
           "localizations" : [
             {
@@ -58,7 +58,7 @@
           "productID" : "handles_2999_1m",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Handles Pro Unlimited",
-          "subscriptionGroupID" : "65FE0BFE",
+          "subscriptionGroupID" : "6CB55688",
           "type" : "RecurringSubscription"
         }
       ]
