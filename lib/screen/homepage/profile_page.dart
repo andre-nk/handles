@@ -51,8 +51,14 @@ class _ProfilePageState extends State<ProfilePage> {
         }
 
         _imgFromGallery(ImageTarget target) async {
-          XFile? image = await ImagePicker()
-              .pickImage(source: ImageSource.gallery, imageQuality: 50);
+          late XFile? image;
+
+          try{
+            image = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 50);
+          } catch (e){
+            print(e);
+          }
+
           setState(() {
             if (target == ImageTarget.profile) {
               _profileImage = image;

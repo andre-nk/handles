@@ -13,4 +13,9 @@ class PurchasesServices with ChangeNotifier{
     PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
     return purchaserInfo;
   }
+
+  Future<PurchaserInfo> purchasePackage(Package package) async{
+    PurchaserInfo purchaserInfo = await Purchases.purchasePackage(package);
+    return purchaserInfo;
+  }
 }

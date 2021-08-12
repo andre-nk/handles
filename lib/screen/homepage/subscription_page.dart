@@ -11,6 +11,7 @@ class SubscriptionPage extends StatefulWidget {
 class _SubscriptionPageState extends State<SubscriptionPage> {
 
   Status userStatus = Status.basic;
+  bool isLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +20,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
         final _purchasesProvider = watch(purchasesProvider);
 
-        Future<PurchaserInfo> purchasePackage(Package package) async{
-          PurchaserInfo purchaserInfo = await Purchases.purchasePackage(package);
-          return purchaserInfo;
-        }
-
+        //DISPLAY PRODUCTS && GET CURRENT USER'S ENTITLEMENT
         Future<List<Package>> displayProducts() async {
           await _purchasesProvider.init();
           PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
@@ -86,12 +83,18 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             future: displayProducts(),
             builder: (context, snapshot){
 
-              print(snapshot.hasData);
+              if(snapshot.hasData && isLoading){
+                WidgetsBinding.instance?.addPostFrameCallback((_) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                });
+              }
   
-              return snapshot.hasData
+              return isLoading == false
               ? SingleChildScrollView(
                   child: Container(
-                    height: MQuery.height(0.975, context),
+                    height: MQuery.height(0.95, context),
                     width: MQuery.width(1, context),
                     padding: EdgeInsets.symmetric(
                       vertical: MQuery.height(0.015, context)
@@ -100,245 +103,147 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Expanded(
-                          flex: 6,
-                          child: Column(
-                            children: [
-                              SizedBox(height: MQuery.height(0.01, context)),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset("assets/handles_logo.png", height: MQuery.height(0.1, context)),
-                                  SizedBox(width: MQuery.width(0.02, context)),
-                                  FadeInLeft(
-                                    from: 20,
-                                    child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Handles",
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Palette.secondaryText)),
-                                          SizedBox(
-                                              height: MQuery.height(0.005, context)),
-                                          Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MQuery.height(0.01, context),
-                                                  vertical:
-                                                      MQuery.height(0.005, context)),
-                                              decoration: BoxDecoration(
-                                                  color: Palette.tertiary,
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(5))),
-                                              child: Center(
-                                                child: Text("PRO",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 13,
-                                                        fontWeight: FontWeight.w700)),
-                                              )),
-                                        ]),
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: MQuery.height(0.035, context)),
-                              Divider(height: 0),
-                              Container(
-                                padding: EdgeInsets.all(MQuery.height(0.02, context)),
+                        Column(
+                          children: [
+                            SizedBox(height: MQuery.height(0.01, context)),
+                            //TITLE
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset("assets/handles_logo.png", height: MQuery.height(0.1, context)),
+                                SizedBox(width: MQuery.width(0.02, context)),
+                                FadeInLeft(
+                                  from: 20,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Basic",
-                                                textAlign: TextAlign.start,
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Palette.secondaryText)
-                                              ),
-                                              SizedBox(width: MQuery.width(0.01, context)),
-                                              userStatus == Status.basic 
-                                              ? AdaptiveIcon(
-                                                  android: Icons.check_circle_outline_rounded,
-                                                  iOS: CupertinoIcons.checkmark_alt_circle,
-                                                  color: Palette.primary
-                                                )
-                                              : SizedBox()
-                                            ],
-                                          ),
-                                          Text(
-                                            "FREE",
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Handles",
                                             textAlign: TextAlign.start,
                                             style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Palette.secondaryText)
-                                            ),
-                                        ]
-                                      ),
-                                      SizedBox(height: MQuery.height(0.02, context)),
-                                      Text(
-                                        "Join a Handles and its feature via invitation-only and display your personal informations only on your profile",
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                          height: 1.5,
-                                          color: Palette.secondaryText,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400
-                                        )
-                                      ),
-                                    ],
-                                  )),
-                              Divider(height: 0),
-                              Expanded(
-                                flex: (snapshot.data!.length),
-                                child: ListView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index){
-                                    return Container(
-                                      height: MQuery.height(0.16, context),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(height: MQuery.height(0.02, context)),
-                                          Divider(height: 0),
-                                          GestureDetector(
-                                            onTap: (){
-                                              if(index == 0){
-                                                if(userStatus == Status.basic){
-                                                  purchasePackage(snapshot.data![index]).then((value){
-                                                    print(value);
-                                                  });
-                                                } else if (userStatus == Status.pro){
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600,
+                                                color: Palette.secondaryText)),
+                                        SizedBox(
+                                            height: MQuery.height(0.005, context)),
+                                        Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MQuery.height(0.01, context),
+                                                vertical:
+                                                    MQuery.height(0.005, context)),
+                                            decoration: BoxDecoration(
+                                                color: Palette.tertiary,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5))),
+                                            child: Center(
+                                              child: Text("PRO",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.w700)),
+                                            )),
+                                      ]),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: MQuery.height(0.035, context)),
+                            Divider(height: 0),
 
-                                                } else if (userStatus == Status.pro_unlimited){
-                                                  purchasePackage(snapshot.data![index]).then((value){
-                                                    print(value);
-                                                  });
-                                                } 
-                                              } else if (index == 1){
-                                                if(userStatus == Status.basic){
-                                                  purchasePackage(snapshot.data![index]).then((value){
-                                                    print(value);
-                                                  });
-                                                } else if (userStatus == Status.pro_unlimited){
-                                                  
-                                                } else if (userStatus == Status.pro){
-                                                  purchasePackage(snapshot.data![index]).then((value){
-                                                    print(value);
-                                                  });
-                                                } 
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.all(MQuery.height(0.02, context)),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            snapshot.data![index].product.title.substring(0, snapshot.data![index].product.title.indexOf('(')),
-                                                            textAlign: TextAlign.start,
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.w600,
-                                                              color: Palette.secondaryText
-                                                            )
-                                                          ),
-                                                          SizedBox(width: MQuery.width(0.005, context)),
-                                                          index == 0
-                                                          ? userStatus == Status.pro 
-                                                            ? AdaptiveIcon(
-                                                                android: Icons.check_circle_outline_rounded,
-                                                                iOS: CupertinoIcons.checkmark_alt_circle,
-                                                                color: Palette.primary
-                                                              )
-                                                            : SizedBox()
-                                                          : userStatus == Status.pro_unlimited
-                                                            ? AdaptiveIcon(
-                                                                android: Icons.check_circle_outline_rounded,
-                                                                iOS: CupertinoIcons.checkmark_alt_circle,
-                                                                color: Palette.primary
-                                                              )
-                                                            : SizedBox()
-                                                        ], 
-                                                      ),
-                                                      Text(
-                                                        snapshot.data![index].product.priceString + "/mo",
-                                                        textAlign: TextAlign.start,
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight: FontWeight.w400,
-                                                          color: Palette.secondaryText
-                                                        )
-                                                      ),
-                                                    ]
-                                                  ),
-                                                  SizedBox(height: MQuery.height(0.02, context)),
-                                                  Text(
-                                                    snapshot.data![index].product.description.replaceAll("\n", ""),
-                                                    style: TextStyle(
-                                                      height: 1.5,
-                                                      color: HexColor("00BFA5"),
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w400
-                                                    )
-                                                  ),
-                                                ],
-                                              )
+                            //BASIC PLAN || NOT LISTED AS PRODUCT
+                            Container(
+                              padding: EdgeInsets.all(MQuery.height(0.02, context)),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Basic",
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                color: Palette.secondaryText)
                                             ),
+                                            SizedBox(width: MQuery.width(0.01, context)),
+                                            userStatus == Status.basic 
+                                            ? AdaptiveIcon(
+                                                android: Icons.check_circle_outline_rounded,
+                                                iOS: CupertinoIcons.checkmark_alt_circle,
+                                                color: Palette.primary
+                                              )
+                                            : SizedBox()
+                                          ],
+                                        ),
+                                        Text(
+                                          "FREE",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Palette.secondaryText)
                                           ),
-                                          Divider(height: 0),
-                                        ]
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(MQuery.height(0.02, context)),
-                                child: Text(
-                                    "The default payment method provided will be charged correspondingly every month until cancelled",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        height: 1.25,
-                                        color:
-                                            Palette.secondaryText.withOpacity(0.75),
+                                      ]
+                                    ),
+                                    SizedBox(height: MQuery.height(0.02, context)),
+                                    Text(
+                                      "Join a Handles and its feature via invitation-only and display your personal informations only on your profile",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        height: 1.5,
+                                        color: Palette.secondaryText,
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w400)),
+                                        fontWeight: FontWeight.w400
+                                      )
+                                    ),
+                                  ],
+                                )),
+                            Divider(height: 0),
+
+                            //LISTED PRODUCT FROM EACH STORES
+                            Column(
+                              children: List.generate(snapshot.data!.length, (index){
+                                return SubscriptionItem(
+                                  index: index,
+                                  package: snapshot.data![index],
+                                  userStatus: userStatus
+                                );
+                              })
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: MQuery.height(0.025, context)),
+                        Container(
+                          padding: EdgeInsets.all(MQuery.height(0.02, context)),
+                          child: Column(
+                            children: [
+                              Text(
+                                "The default payment method provided will be charged correspondingly every month until cancelled",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  height: 1.25,
+                                  color: Palette.secondaryText.withOpacity(0.75),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400
+                                )
+                              ),
+                              Text(
+                                "Got any question? Contact us!",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  height: 1.25,
+                                  color: Palette.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400
+                                )
                               ),
                             ],
                           ),
                         ),
-                        Column(
-                          children: [
-                            Text("Got any question? Contact us!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    height: 1.25,
-                                    color: Palette.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400)),
-                            SizedBox(height: MQuery.height(0.025, context)),
-                            Button(
-                              title: "GO PREMIUM",
-                              color: Palette.primary,
-                              textColor: Colors.white,
-                              method: () {},
-                            ),
-                            SizedBox(height: MQuery.height(0.035, context)),
-                          ],
-                        ),
+                        SizedBox(height: MQuery.height(0.025, context)),
                       ],
                     )
                   )

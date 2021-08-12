@@ -28,8 +28,8 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "",
-              "displayName" : "",
+              "description" : "Up to 5 Handles and company info profile",
+              "displayName" : "Handles Pro",
               "locale" : "en_US"
             }
           ],
@@ -50,8 +50,8 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "",
-              "displayName" : "",
+              "description" : "Unlimited Handles and company info profile",
+              "displayName" : "Handles Pro Unlimited",
               "locale" : "en_US"
             }
           ],
