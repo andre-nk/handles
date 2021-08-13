@@ -50,10 +50,15 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
       builder: (context, watch, _){
 
         final _currentUserProvider = watch(currentUserProvider);
+        final _notificationProvider = watch (notificationProvider);
         final _purchasesProvider = watch(purchasesProvider);
         final _handlesProvider = watch(handlesProvider);
         final _chatProvider = watch(chatProvider);
         final _userProvider = watch(userProvider);
+
+        _notificationProvider.registerNotification().then((value){
+          print("Notification has been registered");
+        });
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,

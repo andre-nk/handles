@@ -116,25 +116,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                 fontSize: 13,
                                 textAlign: TextAlign.start
                               ),
-                              trailing: Container(
-                                height: 27.5,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: Palette.tertiary,
-                                  borderRadius: BorderRadius.all(Radius.circular(5))
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 2.5
-                                  ),
-                                  child: Font.out(
-                                    "PRO",
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700
-                                  ),
-                                )
-                              ),
                               onTap: (){
                                 Get.to(() => ProfilePage(), transition: Transition.cupertino);
                               }
@@ -178,13 +159,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                           textAlign: TextAlign.start
                                         ),
                                         Font.out(
-                                          snapshot.data!.company ?? "Google Flutter Team",
+                                          snapshot.data!.company ?? "Your company name",
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                           textAlign: TextAlign.start
                                         ),
                                         Font.out(
-                                          snapshot.data!.companyAddress ?? "1600 Amphitheatre Parkway Mountain View, CA 94043",
+                                          snapshot.data!.companyAddress ?? "Your company address",
                                           fontWeight: FontWeight.w400,
                                           fontSize: 13,
                                           textAlign: TextAlign.start

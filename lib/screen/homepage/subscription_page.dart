@@ -22,7 +22,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
         //DISPLAY PRODUCTS && GET CURRENT USER'S ENTITLEMENT
         Future<List<Package>> displayProducts() async {
+          
           await _purchasesProvider.init();
+          
           PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
 
           if ((purchaserInfo.entitlements.all['pro'] != null && purchaserInfo.entitlements.all['pro']!.isActive == true)) {

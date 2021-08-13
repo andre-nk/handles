@@ -13,3 +13,4 @@ part 'handles_provider.dart';
 part 'chat_provider.dart';
 part 'call_provider.dart';
 part 'purchases_provider.dart';
+part 'notification_provider.dart';

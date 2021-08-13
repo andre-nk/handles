@@ -5,6 +5,7 @@ class UserModel{
   String name;
   String countryCode;
   String phoneNumber;
+  String? pushToken;
   String? profilePicture;
   String? role;
   String? company;
@@ -20,6 +21,7 @@ class UserModel{
     required this.countryCode,
     required this.phoneNumber,
     required this.profilePicture,
+    this.pushToken,
     this.companyLogo,
     this.role,
     this.company,
