@@ -176,32 +176,32 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
                     if (nameController.text != "") {
                       if (_image != null) {
                         _authenticationProvider
-                            .uploadUserProfilePicture(_image!.path)
-                            .whenComplete(() {
-                          final String _downloadURL = watch(authenticationProvider).profilePictureDownloadURL;
-                          if (_downloadURL != "") {
-                            if (_authenticationProvider.auth.currentUser != null) {
-                              setState(() {
-                                isLoading = false;
-                              });
-                              _authenticationProvider.createUserRecord(
-                                UserModel(
-                                  id: _authenticationProvider.auth.currentUser!.uid,
-                                  name: nameController.text,
-                                  profilePicture: _downloadURL,
-                                  phoneNumber: _authenticationProvider.auth.currentUser!.phoneNumber ?? "",
-                                  countryCode: _authenticationProvider.auth.currentUser!.phoneNumber!.substring(0, 3),
-                                  role: "",
-                                  company: "",
-                                  companyAddress: "",
-                                  companyLogo: "",
-                                  creditCard: "",
-                                  handlesList: [""],
-                                )
-                              );
+                          .uploadUserProfilePicture(_image!.path)
+                          .then((_downloadURL){
+                            if (_downloadURL != "") {
+                              if (_authenticationProvider.auth.currentUser != null) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                _authenticationProvider.createUserRecord(
+                                  UserModel(
+                                    id: _authenticationProvider.auth.currentUser!.uid,
+                                    name: nameController.text,
+                                    profilePicture: _downloadURL,
+                                    phoneNumber: _authenticationProvider.auth.currentUser!.phoneNumber ?? "",
+                                    countryCode: _authenticationProvider.auth.currentUser!.phoneNumber!.substring(0, 3),
+                                    role: "",
+                                    company: "",
+                                    companyAddress: "",
+                                    companyLogo: "",
+                                    creditCard: "",
+                                    handlesList: [""],
+                                  )
+                                );
+                              }
                             }
                           }
-                        });
+                        );
                       } else if (_image == null) {
                         if (_authenticationProvider.auth.currentUser != null) {
                           setState(() {

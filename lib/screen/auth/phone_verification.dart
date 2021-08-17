@@ -30,8 +30,7 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
       final _authenticationProvider = watch(authenticationProvider);
       final _verificationCode = watch(authenticationProvider).verificationCode;
 
-      if (!_hasInvokedAuthService &&
-          widget.verificationStatus == PhoneVerificationType.update) {
+      if (!_hasInvokedAuthService && widget.verificationStatus == PhoneVerificationType.update) {
         print('Invoke updateUserVerifyPhone call...');
         _hasInvokedAuthService = true;
         WidgetsBinding.instance?.addPostFrameCallback((_) {

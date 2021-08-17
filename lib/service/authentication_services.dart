@@ -127,7 +127,7 @@ class AuthenticationService with ChangeNotifier{
     }
   }
 
-  Future<void> uploadUserProfilePicture(String filePath) async {
+  Future<String> uploadUserProfilePicture(String filePath) async {
     File file = File(filePath);
     try {
       await storage
@@ -135,17 +135,15 @@ class AuthenticationService with ChangeNotifier{
       .putFile(file);
 
       String downloadURL = await FirebaseStorage.instance
-        .ref('user_profile/${FirebaseAuth.instance.currentUser!.uid}.png')
-        .getDownloadURL()
-        .whenComplete((){
-          Get.offAll(() => Homepage(), transition: Transition.cupertino);
-        });
+      .ref('user_profile/${FirebaseAuth.instance.currentUser!.uid}.png')
+      .getDownloadURL();
 
-      profilePictureDownloadURL = downloadURL;
-      notifyListeners();
+      return downloadURL;
     } on FirebaseException catch (e) {
       print(e.toString());
     }
+
+    return "";
   }
 
   Future<void> updateUserPhoneVerification(String phoneNumber) async {

@@ -46,8 +46,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-// import 'package:timezone/timezone.dart' as tz;
-// import 'package:timezone/data/latest.dart' as tzDatabase;
 
 part 'auth/onboarding.dart';
 part 'auth/phone_input.dart';

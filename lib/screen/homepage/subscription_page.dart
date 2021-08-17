@@ -22,46 +22,88 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
         //DISPLAY PRODUCTS && GET CURRENT USER'S ENTITLEMENT
         Future<List<Package>> displayProducts() async {
-          
-          await _purchasesProvider.init();
-          
-          PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
+          try{
+            await _purchasesProvider.init();
+            PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
+            if ((purchaserInfo.entitlements.all['pro'] != null && purchaserInfo.entitlements.all['pro']!.isActive == true)) {
+              setState(() {
+                userStatus = Status.pro;
+              });
+              late Offerings offerings;
+              try {
+                offerings = await Purchases.getOfferings();
+              } on PlatformException catch (e) {
+                print(e);
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              }
 
-          if ((purchaserInfo.entitlements.all['pro'] != null && purchaserInfo.entitlements.all['pro']!.isActive == true)) {
-            setState(() {
-              userStatus = Status.pro;
-            });
-            return [];
-          } else if ((purchaserInfo.entitlements.all['pro_unlimited'] != null && purchaserInfo.entitlements.all['pro_unlimited']!.isActive == true)) {
-            setState(() {
-              userStatus = Status.pro_unlimited;
-            });
-            return [];
-          } else {
-            late Offerings offerings;
-            try {
-              offerings = await Purchases.getOfferings();
-            } on PlatformException catch (e) {
-              print(e);
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => ShowDialogToDismiss(
-                  title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-              );
-            }
-
-            // ignore: unnecessary_null_comparison
-            if (offerings == null || offerings.current == null) {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) => ShowDialogToDismiss(
-                  title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-              );
-            } else {
+              // ignore: unnecessary_null_comparison
+              if (offerings == null || offerings.current == null) {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              } else {
                 return offerings.current!.availablePackages;
-            }
-          }
+              }
+            } else if ((purchaserInfo.entitlements.all['pro_unlimited'] != null && purchaserInfo.entitlements.all['pro_unlimited']!.isActive == true)) {
+              setState(() {
+                userStatus = Status.pro_unlimited;
+              });
+              late Offerings offerings;
+              try {
+                offerings = await Purchases.getOfferings();
+              } on PlatformException catch (e) {
+                print(e);
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              }
 
+              // ignore: unnecessary_null_comparison
+              if (offerings == null || offerings.current == null) {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              } else {
+                return offerings.current!.availablePackages;
+              }
+            } else {
+              late Offerings offerings;
+              try {
+                offerings = await Purchases.getOfferings();
+              } on PlatformException catch (e) {
+                print(e);
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              }
+
+              // ignore: unnecessary_null_comparison
+              if (offerings == null || offerings.current == null) {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ShowDialogToDismiss(
+                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
+                );
+              } else {
+                return offerings.current!.availablePackages;
+              }
+            }
+          } catch (e){
+            print(e);
+          }
           return [];
         }
 
@@ -84,16 +126,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           body: FutureBuilder<List<Package>>(
             future: displayProducts(),
             builder: (context, snapshot){
-
-              if(snapshot.hasData && isLoading){
-                WidgetsBinding.instance?.addPostFrameCallback((_) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                });
-              }
-  
-              return isLoading == false
+              return snapshot.hasData
               ? SingleChildScrollView(
                   child: Container(
                     height: MQuery.height(0.95, context),
