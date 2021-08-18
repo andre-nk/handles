@@ -39,7 +39,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-
+    
+    //addPostFrameCallback here...?
     if(selectedHandles.length == 0 && selectedPinnedHandles.length == 0){
       setState(() {
         isHandlesSelected = false;
@@ -709,7 +710,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                         itemBuilder: (context, index){
                 
                                           final _singleHandlesProvider = watch(singleHandlesProvider(user.handlesList![index + 1]));
-                
+                                          
+                                          //Exception karena diwrap Consumer?
                                           return _singleHandlesProvider.when(
                                             data: (handles){
                                               return handles.archivedBy!.indexOf(user.id) >= 0
@@ -774,7 +776,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                           MQuery.width(0.02, context),
                                                           MQuery.height(0.005, context),
                                                         ),
-                                                        leading: Stack(
+                                                        leading: //isHandlesSelected location
+                                                        Stack(
                                                           alignment: Alignment.bottomRight,
                                                           children: [
                                                             CircleAvatar(
