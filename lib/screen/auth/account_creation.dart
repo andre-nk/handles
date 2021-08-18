@@ -204,9 +204,6 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
                         );
                       } else if (_image == null) {
                         if (_authenticationProvider.auth.currentUser != null) {
-                          setState(() {
-                            isLoading = false;
-                          });
                           _authenticationProvider.createUserRecord(
                             UserModel(
                               id: _authenticationProvider.auth.currentUser!.uid,
@@ -224,6 +221,9 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
                               handlesList: [""],
                             )
                           );
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
                       }
                     } else {

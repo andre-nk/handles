@@ -29,9 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context){
     return Consumer(
       builder: (ctx, watch, _) {
         final _userProvider = watch(userProvider);
@@ -126,6 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return StreamBuilder<UserModel>(
             stream: _userProvider.getCurrentUser,
             builder: (context, snapshot) {
+
               if (snapshot.hasData) {
                 nameController.text = snapshot.data!.name;
                 jobController.text = snapshot.data!.role ?? "";
@@ -251,30 +250,29 @@ class _ProfilePageState extends State<ProfilePage> {
                                           fontSize: 16,
                                         ),
                                         decoration: InputDecoration(
-                                            hintStyle: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black
-                                                    .withOpacity(0.4)),
-                                            hintText:
-                                                "Enter your username here...",
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                                15, 10, 15, 10),
-                                            border: InputBorder.none),
-                                        onEditingComplete: () {
-                                          _userProvider.updateDisplayName(
-                                              nameController.text);
+                                          hintStyle: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black.withOpacity(0.4)
+                                          ),
+                                          hintText: "Enter your username here...",
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              15, 10, 15, 10),
+                                          border: InputBorder.none
+                                        ),
+                                        onFieldSubmitted: (value) {
+                                          _userProvider.updateDisplayName(nameController.text);
                                         },
                                       ),
                                     ),
                                     Divider(height: 0),
                                     ListTile(
                                       shape: Border.symmetric(
-                                          vertical: BorderSide(
-                                              color:
-                                                  Colors.grey.withOpacity(0.5))),
+                                        vertical: BorderSide(
+                                          color: Colors.grey.withOpacity(0.5)
+                                        )
+                                      ),
                                       horizontalTitleGap: -10,
-                                      leading:
-                                          SvgPicture.asset("assets/medal.svg"),
+                                      leading: SvgPicture.asset("assets/medal.svg"),
                                       title: TextFormField(
                                           readOnly: isReadOnly,
                                           keyboardType: TextInputType.name,
@@ -294,9 +292,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               contentPadding: EdgeInsets.fromLTRB(
                                                   15, 10, 15, 10),
                                               border: InputBorder.none),
-                                          onEditingComplete: () {
-                                            _userProvider
-                                                .updateRole(jobController.text);
+                                          onFieldSubmitted: (value) {
+                                            _userProvider.updateRole(jobController.text);
                                           }),
                                     ),
                                     Divider(height: 0),
@@ -378,9 +375,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       contentPadding: EdgeInsets.fromLTRB(
                                                           15, 10, 15, 10),
                                                       border: InputBorder.none),
-                                                  onEditingComplete: () {
-                                                    _userProvider.updateCompany(
-                                                        companyController.text);
+                                                  onFieldSubmitted: (value) {
+                                                    _userProvider.updateCompany(companyController.text);
                                                   }),
                                             ),
                                             Divider(height: 0),
@@ -415,7 +411,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                             EdgeInsets.fromLTRB(
                                                                 15, 10, 15, 10),
                                                         border: InputBorder.none),
-                                                    onEditingComplete: () {
+                                                    onFieldSubmitted: (value) {
                                                       _userProvider.updateCompanyAddress(
                                                           addressController.text);
                                                     }),

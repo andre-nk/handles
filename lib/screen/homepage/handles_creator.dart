@@ -120,7 +120,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                   Get.back();
                 },
               ),
-              title: Text("Create a Handle",
+              title: Text("Create Chat",
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       fontSize: 18,
@@ -188,7 +188,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                                                   FormError.title
                                               ? Palette.warning
                                               : Colors.black.withOpacity(0.4)),
-                                      hintText: "Enter the project's title...",
+                                      hintText: "Enter the chat's title...",
                                       contentPadding:
                                           EdgeInsets.fromLTRB(15, 10, 15, 10),
                                       border: InputBorder.none),
@@ -197,7 +197,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                           SizedBox(height: MQuery.height(0.02, context)),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
-                            child: Font.out("Handle's description (optional)",
+                            child: Font.out("Description (optional)",
                                 fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                           SizedBox(height: MQuery.height(0.01, context)),
@@ -230,7 +230,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                                             ? Palette.warning
                                             : Colors.black.withOpacity(0.4)),
                                     hintText:
-                                        "Enter project's description (optional)",
+                                        "Enter chat's description (optional)",
                                     contentPadding:
                                         EdgeInsets.fromLTRB(15, 10, 15, 10),
                                     border: InputBorder.none),
@@ -339,7 +339,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                           SizedBox(height: MQuery.height(0.05, context)),
                           Button(
                               width: double.infinity,
-                              title: "Create Handle",
+                              title: "Create Chat",
                               textColor: Colors.white,
                               color: Palette.primary,
                               method: () async {

@@ -20,13 +20,13 @@ class EmptyHandles extends StatelessWidget {
               child: Column(
                 children: [
                   Font.out(
-                    "No Handles",
+                    "No chats yet",
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
                     color: Palette.primaryText
                   ),
                   Font.out(
-                    "Go be a Premium user to create new one",
+                    "Go be a PRO user to create new one",
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
                     color: Palette.primaryText

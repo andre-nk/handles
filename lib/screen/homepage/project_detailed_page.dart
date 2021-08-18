@@ -433,7 +433,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                 color: Palette.secondary,
                                 method: (){},
                                 textColor: Colors.white,
-                                title: "PAY SERVICE",
+                                title: "VIEW MILESTONE",
                               )
                             : SizedBox(),
                             SizedBox(height: MQuery.height(0.01,  context)),

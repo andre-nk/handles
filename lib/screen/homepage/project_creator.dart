@@ -35,23 +35,21 @@ class _ProjectCreatorState extends State<ProjectCreator> {
       });
     }
 
-    print(milestones);
-
     return Consumer(
       builder: (ctx, watch,child) {
-
         Map? localeModel;
         final _chatProvider = watch(chatProvider);
         final _userProvider = watch(currentUserProvider);
-        if(widget.projectModel != null){
-          watch(projectChatMilestonesProvider(widget.projectModel!.id)).whenData((value){
-            setState(() {
-              milestones = value;
-            });
-          });
-        }
 
-        print(milestones);
+        WidgetsBinding.instance!.addPostFrameCallback((_){
+          if(widget.projectModel != null){
+            watch(projectChatMilestonesProvider(widget.projectModel!.id)).whenData((value){
+              setState(() {
+                milestones = value;
+              });
+            });
+          }
+        });
 
         _userProvider.whenData((user){
           localeModel = CountryCodeModel.countryCodes.firstWhere((element){

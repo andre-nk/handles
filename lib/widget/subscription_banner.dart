@@ -24,7 +24,7 @@ class SubscriptionBanner extends StatelessWidget {
         MQuery.height(0, context),
       ),
       title: Font.out(
-        "Create your Handles",
+        "Upgrade to unlimited",
         fontSize: 16,
         fontWeight: FontWeight.w700,
         textAlign: TextAlign.start

@@ -34,7 +34,7 @@ class OnboardingPage extends StatelessWidget {
                       color: Colors.white
                     ),
                     Font.out(
-                      "A simple and simple group-chat \nmessenger for businesses",
+                      "A simple group messenger for your trade projects - chat & collaborate on one feed",
                       textAlign: TextAlign.center,
                       fontSize: 18,
                       fontWeight: FontWeight.w300,

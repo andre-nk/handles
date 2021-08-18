@@ -254,7 +254,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                               fontSize: 14,
                               color: Colors.black.withOpacity(0.4)
                             ),
-                            hintText: "Enter your Handle's description here...",
+                            hintText: "Enter Handle's description here...",
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 20,
                               horizontal: 15
@@ -360,7 +360,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "Handles DevTeam Payment Address",
+                                            "Handles DevTeam Payment Details",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               fontSize: 18,
@@ -375,49 +375,26 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                               borderRadius: BorderRadius.all(Radius.circular(5))
                                             ),
                                             child: TextFormField(
-                                              readOnly: true,
-                                              keyboardType: TextInputType.number,
+                                              readOnly: false,
+                                              maxLines: 6,
+                                              minLines: 4,
+                                              keyboardType: TextInputType.text,
                                               controller: paymentAddressController,
                                               cursorColor: Palette.primary,
                                               style: TextStyle(
                                                 fontSize: 16
                                               ),
                                               decoration: InputDecoration(
-                                                isDense: true,
-                                                suffixIconConstraints: BoxConstraints(
-                                                  minWidth: 2,
-                                                  minHeight: 2,
-                                                ),
-                                                suffixIcon: IconButton(
-                                                  onPressed: (){
-                                                    // Clipboard.setData(ClipboardData(text: widget.meetingModel.meetingURL));
-                                                  },
-                                                  icon: AdaptiveIcon(
-                                                    android: Icons.copy,
-                                                    iOS: CupertinoIcons.doc_on_clipboard_fill,
-                                                    color: Palette.primary,
-                                                    size: 20
-                                                  )
-                                                ),
+                                                isDense: true,         
                                                 fillColor: Palette.primary,
                                                 hintStyle: TextStyle(
                                                   fontSize: 16,
                                                   color: Colors.black.withOpacity(0.4)
                                                 ),
-                                                hintText: "Credit card hasn't provided yet",
+                                                hintText: "Payment details hasn't provided yet",
                                                 contentPadding: EdgeInsets.all(15),
                                                 border: InputBorder.none
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(height: MQuery.height(0.02, context)),
-                                          Text(
-                                            "This payment address (Credit Card) is officially afforded by this project's admin(s). Any form of transaction related to this project should be transferred to this address.",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Palette.primaryText,
-                                              fontWeight: FontWeight.w400
                                             ),
                                           ),
                                         ]
@@ -432,7 +409,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                             vertical: BorderSide(color: Colors.grey.withOpacity(0.5))
                           ),
                           title: Text(
-                            "Project payment address",
+                            "Payment details",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
@@ -541,7 +518,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         title: Font.out(
                                           snapshot.data!.name,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.normal,
                                           textAlign: TextAlign.start
                                         ),
                                         trailing: Container(

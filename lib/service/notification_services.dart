@@ -47,4 +47,15 @@ class NotificationServices{
       print(err);
     });
   }
+
+  Future<void> markNotification(String meetingName, bool mark) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(meetingName, mark);
+  }
+
+  Future<bool> getScheduleMark(String meetingName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool value = prefs.getBool(meetingName) ?? false;
+    return value;
+  }
 }

@@ -40,39 +40,50 @@ class _MeetingChatState extends State<MeetingChat> {
       }
     }
 
-    Future<void> activateNotification() async {
-      FlutterAppBadger.updateBadgeCount(1);
-      print("FIRED!!!");
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: Random().nextInt(1000),
-          channelKey: 'scheduled',
-          title: widget.meetingModel.meetingName,
-          body: '${widget.meetingModel.meetingName} is going to start in 5 minutes. Click here to join it!',
-          notificationLayout: NotificationLayout.Default,
-          payload: {
-            "link": widget.meetingModel.meetingURL
-          }
-        ),
-        schedule: NotificationCalendar.fromDate(date: widget.meetingModel.meetingStartTime.subtract(5.minutes))
-      );
-    }
-
     return Consumer(
       builder: (ctx, watch, child) {
 
         final _userProvider = watch(userProvider);
+        final _notificationProvider = watch(notificationProvider);
+
+        Future<void> activateNotification() async {
+          _notificationProvider.getScheduleMark(widget.meetingModel.meetingName).then((value) async {
+            if(value == false && widget.meetingModel.meetingStartTime.isAfter(DateTime.now())){
+              FlutterAppBadger.updateBadgeCount(1);
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: Random().nextInt(1000),
+                  channelKey: 'scheduled',
+                  title: widget.meetingModel.meetingName,
+                  body: '${widget.meetingModel.meetingName} is going to start in 5 minutes. Click here to join it!',
+                  notificationLayout: NotificationLayout.Default,
+                  payload: {
+                    "link": widget.meetingModel.meetingURL
+                  }
+                ),
+                schedule: NotificationCalendar.fromDate(date: widget.meetingModel.meetingStartTime.subtract(5.minutes))
+              );
+              _notificationProvider.markNotification(widget.meetingModel.meetingName, true);
+            } else {
+              if(widget.meetingModel.meetingStartTime.isBefore(DateTime.now())){
+                _notificationProvider.markNotification(widget.meetingModel.meetingName, false);
+              }
+            }
+          });
+        }
 
         return widget.sender == widget.userID
             ? GestureDetector(
                 onTap: () {
                   Get.to(
-                      () => MeetingDetailedPage(
-                          meetingModel: this.widget.meetingModel,
-                          senderUID: this.widget.sender,
-                          handlesID: widget.handlesID,
-                          userID: widget.userID),
-                      transition: Transition.cupertino);
+                    () => MeetingDetailedPage(
+                      meetingModel: this.widget.meetingModel,
+                      senderUID: this.widget.sender,
+                      handlesID: widget.handlesID,
+                      userID: widget.userID
+                    ),
+                    transition: Transition.cupertino
+                  );
                 },
                 child: Container(
                     width: MQuery.width(1, context),
@@ -194,7 +205,7 @@ class _MeetingChatState extends State<MeetingChat> {
                                       ? Builder(
                                           builder: (context) {
 
-                                            activateNotification();
+                                            WidgetsBinding.instance!.addPostFrameCallback((_) => activateNotification());
 
                                             return Button(
                                               height: MQuery.height(0.045, context),
@@ -455,7 +466,9 @@ class _MeetingChatState extends State<MeetingChat> {
                                       widget.meetingModel.meetingStartTime.isAfter(DateTime.now())
                                         ? Builder(
                                           builder: (context) {
-                                            activateNotification();
+
+                                            WidgetsBinding.instance!.addPostFrameCallback((_) => activateNotification());
+
                                             return Button(
                                                 height:
                                                     MQuery.height(0.045, context),

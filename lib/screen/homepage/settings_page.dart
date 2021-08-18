@@ -267,7 +267,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "Your Payment Address",
+                                                "Your Payment Details",
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontSize: 18,
@@ -277,62 +277,31 @@ class _SettingsPageState extends State<SettingsPage> {
                                               ),
                                               SizedBox(height: MQuery.height(0.02, context)),
                                               Container(
-                                                padding: EdgeInsets.only(
-                                                  bottom: MQuery.height(0.02, context)
-                                                ),
                                                 decoration: BoxDecoration(
                                                   color: Palette.formColor,
                                                   borderRadius: BorderRadius.all(Radius.circular(5))
                                                 ),
                                                 child: TextFormField(
-                                                  maxLength: 12,
                                                   readOnly: false,
-                                                  keyboardType: TextInputType.number,
+                                                  maxLines: 6,
+                                                  minLines: 4,
+                                                  keyboardType: TextInputType.text,
                                                   controller: paymentAddressController,
                                                   cursorColor: Palette.primary,
                                                   style: TextStyle(
                                                     fontSize: 16
                                                   ),
-                                                  onEditingComplete: (){
-                                                    _userProvider.updateCreditCard(paymentAddressController.text);
-                                                    Get.back();
-                                                  },
                                                   decoration: InputDecoration(
-                                                    isDense: true,
-                                                    suffixIconConstraints: BoxConstraints(
-                                                      minWidth: 2,
-                                                      minHeight: 2,
-                                                    ),
-                                                    suffixIcon: IconButton(
-                                                      onPressed: (){
-                                                        // Clipboard.setData(ClipboardData(text: widget.meetingModel.meetingURL));
-                                                      },
-                                                      icon: AdaptiveIcon(
-                                                        android: Icons.copy,
-                                                        iOS: CupertinoIcons.doc_on_clipboard_fill,
-                                                        color: Palette.primary,
-                                                        size: 20
-                                                      )
-                                                    ),
+                                                    isDense: true,         
                                                     fillColor: Palette.primary,
                                                     hintStyle: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.black.withOpacity(0.4)
                                                     ),
-                                                    hintText: "Credit card hasn't provided yet",
+                                                    hintText: "Payment details hasn't provided yet",
                                                     contentPadding: EdgeInsets.all(15),
                                                     border: InputBorder.none
                                                   ),
-                                                ),
-                                              ),
-                                              SizedBox(height: MQuery.height(0.02, context)),
-                                              Text(
-                                                "Your payment address (Credit Card) is official and will be used for any form of transaction related to a Handles Group that you've created or currently admining",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Palette.primaryText,
-                                                  fontWeight: FontWeight.w400
                                                 ),
                                               ),
                                             ]
@@ -347,7 +316,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 vertical: BorderSide(color: Colors.grey.withOpacity(0.5))
                               ),
                               title: Text(
-                                "Project payment address",
+                                "Payment details",
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,

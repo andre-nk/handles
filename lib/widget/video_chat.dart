@@ -62,7 +62,6 @@ class _VideoChatState extends State<VideoChat> {
         maxHeight: 180,
         quality: 50,
       );
-
       return fileName;
     }
 
@@ -252,7 +251,7 @@ class _VideoChatState extends State<VideoChat> {
                                                               Positioned.fill(
                                                                 child: Image.file(
                                                                   File(snapshot.data ?? ""),
-                                                                  fit: BoxFit.fill
+                                                                  fit: BoxFit.fitWidth
                                                                 ),
                                                               ),
                                                               Container(
