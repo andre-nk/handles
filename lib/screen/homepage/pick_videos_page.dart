@@ -236,11 +236,11 @@ class _PickVideosPageState extends State<PickVideosPage> {
                                 child: _mediaList[index]
                               ),
                               selectedEntities.toList().indexOf(_rawMediaList[index]) >= 0
-                              ? ZoomIn(
-                                  duration: Duration(milliseconds: 100),
-                                  child: Positioned(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                              ? Positioned(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ZoomIn(
+                                      duration: Duration(milliseconds: 100),
                                       child: CircleAvatar(
                                         backgroundColor: Palette.primary,
                                         radius: 10,

@@ -357,16 +357,15 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                                 backgroundImage: NetworkImage(handles.cover)
                               ),
                               selectedHandles.toList().indexOf(user.handlesList![index + 1]) >= 0
-                              ? ZoomIn(
+                              ? Positioned(
+                                  child: ZoomIn(
                                   duration: Duration(milliseconds: 100),
-                                  child: Positioned(
-                                    child: CircleAvatar(
-                                      backgroundColor: Palette.secondary,
-                                      radius: 10,
-                                      child: Icon(Icons.check, size: 12, color: Colors.white),
-                                    ),
+                                  child: CircleAvatar(
+                                    radius: 10,
+                                    child: Icon(Icons.check, size: 12, color: Colors.white),
+                                    backgroundColor: Palette.secondary
                                   ),
-                                )
+                                ))
                               : SizedBox()
                             ],
                           ),

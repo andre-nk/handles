@@ -138,10 +138,10 @@ class _HandlesCoverPageState extends State<HandlesCoverPage> {
                 resetDuration: const Duration(milliseconds: 100),
                 maxScale: 1,
                 onZoomStart: () {
-                  print('Start zooming');
+                 
                 },
                 onZoomEnd: () {
-                  print('Stop zooming');
+                 
                 },
               ),
             ));
