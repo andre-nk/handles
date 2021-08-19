@@ -14,8 +14,8 @@ class PreviewImagesPage extends StatefulWidget {
 
 class _PreviewImagesPageState extends State<PreviewImagesPage> {
 
-  late AssetEntity assetMedia;
   int globalID = 0;
+  late AssetEntity assetMedia;
   TextEditingController chatController = TextEditingController();
 
   @override
@@ -111,7 +111,7 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                         });
                       });
 
-                      Get.off(() => HandlesPage(handlesID: widget.handlesID), transition: Transition.cupertino);
+                      Get.off(() => HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: true), transition: Transition.cupertino);
                     },
                   )
                 ]
@@ -132,13 +132,17 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                               return FutureBuilder<File?>(
                                 future: widget.selectedEntities.toList()[index].loadFile(),
                                 builder: (context, snapshot) {
-                                  return PinchZoom(
-                                    image: Image.file(snapshot.data!),
-                                    zoomedBackgroundColor: Colors.black,
-                                    resetDuration: const Duration(milliseconds: 100),
-                                    maxScale: 1,
-                                    onZoomStart: (){print('Start zooming');},
-                                    onZoomEnd: (){print('Stop zooming');},
+                                  return snapshot.hasData
+                                  ? PinchZoom(
+                                      image: Image.file(snapshot.data!),
+                                      zoomedBackgroundColor: Colors.black,
+                                      resetDuration: const Duration(milliseconds: 100),
+                                      maxScale: 1,
+                                      onZoomStart: (){print('Start zooming');},
+                                      onZoomEnd: (){print('Stop zooming');},
+                                    )
+                                  : Center(
+                                      child: CircularProgressIndicator(color: Palette.primary)
                                   );
                                 }
                               );

@@ -52,10 +52,7 @@ class _CallPageState extends State<CallPage> {
                     appId: "33a7608a9e714097bb913a6e7e6ba3a2",
                     channelName: widget.handlesID
                   ),
-                  enabledPermission: [
-                    Permission.camera,
-                    Permission.microphone,
-                  ],
+                  enabledPermission: [],
                 ),
                 handlesID: widget.handlesID,
                 userID: widget.userID,
@@ -151,7 +148,7 @@ class _CallPageState extends State<CallPage> {
                                 _callProvider.terminateCallChannel(this.widget.handlesID, DateTime.now());
                               }
                               widget.client.sessionController.endCall();
-                              Get.off(() => HandlesPage(handlesID: widget.handlesID));
+                              Get.off(() => HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: false));
                             },
                           ),
                         ),

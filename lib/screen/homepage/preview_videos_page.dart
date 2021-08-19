@@ -124,7 +124,7 @@ class _PreviewVideosPageState extends State<PreviewVideosPage> {
                         });
                       });
         
-                      Get.off(() => HandlesPage(handlesID: widget.handlesID), transition: Transition.cupertino);
+                      Get.off(() => HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: true), transition: Transition.cupertino);
                     },
                   )
                 ]

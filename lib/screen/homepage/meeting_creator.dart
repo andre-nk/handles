@@ -165,7 +165,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                                   ),
                                   onPressed: (){
                                     _chatProvider.deleteMeetingChat(widget.handlesID, widget.meetingModel!.id);
-                                    Get.off(HandlesPage(handlesID: widget.handlesID));
+                                    Get.off(HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: false));
                                   },
                                 )
                               ],
@@ -200,7 +200,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                                   ),
                                   onPressed: (){
                                     _chatProvider.deleteMeetingChat(widget.handlesID, widget.meetingModel!.id);
-                                    Get.off(HandlesPage(handlesID: widget.handlesID));
+                                    Get.off(HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: false));
                                   },
                                 )
                               ],

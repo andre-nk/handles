@@ -57,6 +57,12 @@ class UserServices with ChangeNotifier{
 
   Future<void> updateDisplayName(String name) async{
     await auth.currentUser!.updateDisplayName(name);
+    await firestore
+    .collection('users')
+    .doc(auth.currentUser!.uid)
+    .update({
+      "name": name
+    });
   }
 
   Future<void> updateRole(String role) async{

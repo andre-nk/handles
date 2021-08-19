@@ -3,9 +3,8 @@ part of "services.dart";
 class NotificationServices{
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
-  final FirebaseStorage storage;
 
-  NotificationServices(this.auth, this.firestore, this.storage);
+  NotificationServices(this.auth, this.firestore);
 
   Future<void> registerNotification() async {
     FirebaseMessaging.instance.requestPermission();
@@ -36,7 +35,6 @@ class NotificationServices{
 
   Future<void> registerNotificationToken() async {
     FirebaseMessaging.instance.getToken().then((token) {
-      print('token: $token');
       firestore
       .collection('users')
       .doc(auth.currentUser!.uid)

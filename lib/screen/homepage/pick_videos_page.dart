@@ -35,7 +35,7 @@ class _PickVideosPageState extends State<PickVideosPage> {
           rawTemp.add(asset);
           temp.add(
             FutureBuilder<Uint8List?>(
-              future: asset.thumbDataWithSize(300, 300),
+              future: asset.thumbDataWithSize(200, 200),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done)
                   return Stack(

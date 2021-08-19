@@ -124,7 +124,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                                   ),
                                   onPressed: (){
                                     _chatProvider.deleteProjectChat(widget.handlesID, widget.projectModel!);
-                                    Get.offAll(HandlesPage(handlesID: widget.handlesID));
+                                    Get.offAll(HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: false));
                                   },
                                 )
                               ],
@@ -159,7 +159,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                                   ),
                                   onPressed: (){
                                     _chatProvider.deleteProjectChat(widget.handlesID, widget.projectModel!);
-                                    Get.off(HandlesPage(handlesID: widget.handlesID));
+                                    Get.off(HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: false));
                                   },
                                 )
                               ],

@@ -17,6 +17,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   Set<String> selectedHandles = Set();
   Set<String> selectedPinnedHandles = Set();
   late TabController _tabController;
+  late NotificationServices _notificationServices;
 
   @override
   void initState() { 
@@ -26,6 +27,15 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
       if (!isAllowed) {
         await AwesomeNotifications().requestPermissionToSendNotifications();
       }
+    });
+
+    _notificationServices = NotificationServices(
+      FirebaseAuth.instance, 
+      FirebaseFirestore.instance,
+    );
+
+    _notificationServices.registerNotification().then((_) {
+      print("Notification has been registered");
     });
 
     _tabController = TabController(vsync: this, length: 2);
@@ -50,15 +60,10 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
       builder: (context, watch, _){
 
         final _currentUserProvider = watch(currentUserProvider);
-        final _notificationProvider = watch (notificationProvider);
         final _purchasesProvider = watch(purchasesProvider);
         final _handlesProvider = watch(handlesProvider);
         final _chatProvider = watch(chatProvider);
         final _userProvider = watch(userProvider);
-
-        _notificationProvider.registerNotification().then((value){
-          print("Notification has been registered");
-        });
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -76,7 +81,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 _purchasesProvider.getPurchaserInfo().then((value){
                   if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true)){
                     _currentUserProvider.whenData((user){
-                      if(user.createdHandles!.length < 5){
+                      if(user.createdHandles!.length <= 6){
                         Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
                       } else {
                         showDialog(
@@ -160,7 +165,89 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                   } else if ((value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
                     Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
                   } else {
-                    Get.to(() => SubscriptionPage(), transition: Transition.cupertino);
+                    _currentUserProvider.whenData((user){
+                      if(user.createdHandles!.length < 2){
+                        print("abc");
+                        Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context){
+                            return Platform.isAndroid
+                            ? AlertDialog(
+                                title: Text(
+                                  "You have created one free Handles!",
+                                ),
+                                content: Text(
+                                  'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text("CANCEL"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.warning,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("SUBSCRIBE"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.primary,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                      Get.to(() => SubscriptionPage());
+                                    },
+                                  )
+                                ],
+                              )
+                            : CupertinoAlertDialog(
+                                title: Text(
+                                  "You have created one free Handles!",
+                                ),
+                                content: Text(
+                                  'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text("CANCEL"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.warning,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("SUBSCRIBE"),
+                                    style: TextButton.styleFrom(
+                                      textStyle: TextStyle(
+                                        color: Palette.primary,
+                                        fontWeight: FontWeight.w500
+                                      )
+                                    ),
+                                    onPressed: (){
+                                      Get.back();
+                                      Get.to(() => SubscriptionPage());
+                                    },
+                                  )
+                                ],
+                              );
+                          }
+                        );
+                      }
+                    });
                   }
                 });           
               },
@@ -521,7 +608,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                                 }
                                                               } else {
                                                                 Get.to(() => HandlesPage(
-                                                                  handlesID: user.handlesList![index + 1]
+                                                                  handlesID: user.handlesList![index + 1],
+                                                                  isFromSendingFiles: false
                                                                 ), transition: Transition.cupertino);
                                                               }
                                                             },
@@ -764,7 +852,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                             }
                                                           } else {
                                                             Get.to(() => HandlesPage(
-                                                              handlesID: user.handlesList![index + 1]
+                                                              handlesID: user.handlesList![index + 1],
+                                                              isFromSendingFiles: false
                                                             ), transition: Transition.cupertino);
                                                           }
                                                         },
@@ -1051,7 +1140,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                               ),
                                               trailing: IconButton(
                                                 onPressed: (){
-                                                  Get.to(() => HandlesPage(handlesID: snapshot.data!.id));
+                                                  Get.to(() => HandlesPage(handlesID: snapshot.data!.id, isFromSendingFiles: false));
                                                 },
                                                 icon: AdaptiveIcon(
                                                   android: Icons.call,

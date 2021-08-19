@@ -40,9 +40,6 @@ class HandlesServices with ChangeNotifier{
   }
 
   Future<void> createHandles(HandlesModel handlesModel) async {
-
-    print(handlesModel.id);
-
     await firestore
     .collection('users')
     .doc(auth.currentUser!.uid)
@@ -306,27 +303,33 @@ class HandlesServices with ChangeNotifier{
   }
 
   Stream<List<HandlesModel>> handlesModelSearcher(String searchKey){
-    return firestore
-    .collection('handles')
-    .where('name', isGreaterThanOrEqualTo: searchKey)
-    .where('name', isLessThan: searchKey +'z')
-    .snapshots()
-    .map((value){
-      List<HandlesModel> handlesOut = [];
-      value.docs.forEach((snapshot) {
-        HandlesModel out = HandlesModel(
-          id: snapshot.id,
-          description: snapshot['description'],
-          members: (snapshot['members'] as Map<dynamic, dynamic>).cast<String, String>(),
-          name: snapshot['name'],
-          cover: snapshot['cover'],
-          pinnedBy: (snapshot['pinnedBy'] as List<dynamic>).cast<String>(),
-          archivedBy: (snapshot['archivedBy'] as List<dynamic>).cast<String>(),
-        );
-        handlesOut.add(out);
+    try {
+      return firestore
+      .collection('handles')
+      .where('name', isGreaterThanOrEqualTo: searchKey)
+      .where('name', isLessThan: searchKey +'z')
+      .snapshots()
+      .map((value){
+        List<HandlesModel> handlesOut = [];
+        value.docs.forEach((snapshot) {
+          HandlesModel out = HandlesModel(
+            id: snapshot.id,
+            description: snapshot['description'],
+            members: (snapshot['members'] as Map<dynamic, dynamic>).cast<String, String>(),
+            name: snapshot['name'],
+            cover: snapshot['cover'],
+            pinnedBy: (snapshot['pinnedBy'] as List<dynamic>).cast<String>(),
+            archivedBy: (snapshot['archivedBy'] as List<dynamic>).cast<String>(),
+          );
+          handlesOut.add(out);
       });
       return handlesOut;
     });
+    } catch (e){
+      print(e);
+    } throw {
+
+    };
   }
 
   Future<void> deleteHandleCollaborator(UserModel userModel, Map<String, String> newHandlesMembers, String handlesID, {bool? isLeft}) async{
@@ -474,9 +477,6 @@ class HandlesServices with ChangeNotifier{
 
     List<String> newHandlesList = userModel.handlesList!;
     newHandlesList.add(handlesID);
-
-    print(newHandlesList);
-    print(newHandlesMembers);
 
     return firestore
     .collection('handles')

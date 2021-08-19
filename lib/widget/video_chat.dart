@@ -60,7 +60,7 @@ class _VideoChatState extends State<VideoChat> {
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.JPEG,
         maxHeight: 180,
-        quality: 50,
+        quality: 75,
       );
       return fileName;
     }

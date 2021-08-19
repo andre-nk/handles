@@ -22,7 +22,7 @@ class ImagePreviewer extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-              centerTitle: false,
+        centerTitle: false,
         backgroundColor: Colors.black.withOpacity(0.5),
         toolbarHeight: MQuery.height(0.07, context),
         leading: IconButton(
@@ -89,10 +89,11 @@ class ImagePreviewer extends StatelessWidget {
               text: this.content,
               textAlign: TextAlign.start,
               style: TextStyle(
-                  height: 1.25,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15),
+                height: 1.25,
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
+                fontSize: 15
+              ),
             ),
           )
         ],

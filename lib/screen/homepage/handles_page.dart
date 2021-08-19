@@ -3,7 +3,8 @@ part of "../pages.dart";
 class HandlesPage extends StatefulWidget {
 
   final String handlesID;
-  const HandlesPage({ Key? key, required this.handlesID }) : super(key: key);
+  final bool isFromSendingFiles;
+  const HandlesPage({ Key? key, required this.handlesID, required this.isFromSendingFiles}):super(key: key);
 
   @override
   _HandlesPageState createState() => _HandlesPageState();
@@ -127,7 +128,7 @@ class _HandlesPageState extends State<HandlesPage> {
                 return Scaffold(
                   backgroundColor: Palette.handlesBackground,
                   appBar: AppBar(
-              centerTitle: false,
+                    centerTitle: false,
                     elevation: isSearchActive ? 0 : 1,
                     toolbarHeight: MQuery.height(0.075, context),
                     leadingWidth: !isChatSelected 
@@ -170,7 +171,11 @@ class _HandlesPageState extends State<HandlesPage> {
                               searchKey = "";
                             }); 
                           } else {
-                            Get.back();
+                            if(widget.isFromSendingFiles){
+                              Get.offAll(() => Homepage(), transition: Transition.cupertino);
+                            } else {
+                              Get.back();
+                            }
                           }
                         },
                       ),
@@ -481,25 +486,46 @@ class _HandlesPageState extends State<HandlesPage> {
                                       android: Icons.add_call,
                                       iOS: CupertinoIcons.phone_solid,
                                     ),
-                                    onPressed: (){
+                                    onPressed: () async {
                                       if(callChannel.participants.isNotEmpty && callChannel.intendedParticipants.indexOf(currentUser.id) >= 0){
-                                        _callProvider.joinCallChannel(handles.id);
-                                        Get.to(() => CallPage(
-                                          client: AgoraClient(
-                                            agoraConnectionData: AgoraConnectionData(
-                                              appId: "33a7608a9e714097bb913a6e7e6ba3a2",
-                                              channelName: handles.id,
+                                        if(await Permission.camera.isGranted){
+                                          _callProvider.joinCallChannel(handles.id);
+                                          Get.to(() => CallPage(
+                                            client: AgoraClient(
+                                              agoraConnectionData: AgoraConnectionData(
+                                                appId: "33a7608a9e714097bb913a6e7e6ba3a2",
+                                                channelName: handles.id,
+                                              ),
+                                              enabledPermission: [
+                                              ],
                                             ),
-                                            enabledPermission: [
-                                              Permission.camera,
-                                              Permission.microphone,
-                                            ],
-                                          ),
-                                          handlesID: handles.id,
-                                          userID: currentUser.id,
-                                          isJoining: true,
-                                          isLoading: true
-                                        ));
+                                            handlesID: handles.id,
+                                            userID: currentUser.id,
+                                            isJoining: true,
+                                            isLoading: true
+                                          ));
+                                        } else {
+                                          await [
+                                            Permission.camera,
+                                            Permission.microphone,
+                                          ].request();
+
+                                          _callProvider.joinCallChannel(handles.id);
+                                          Get.to(() => CallPage(
+                                            client: AgoraClient(
+                                              agoraConnectionData: AgoraConnectionData(
+                                                appId: "33a7608a9e714097bb913a6e7e6ba3a2",
+                                                channelName: handles.id,
+                                              ),
+                                              enabledPermission: [
+                                              ],
+                                            ),
+                                            handlesID: handles.id,
+                                            userID: currentUser.id,
+                                            isJoining: true,
+                                            isLoading: true
+                                          ));
+                                        }
                                       } else if (callChannel.participants.isNotEmpty && callChannel.intendedParticipants.indexOf(currentUser.id) <= 0) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
@@ -521,6 +547,10 @@ class _HandlesPageState extends State<HandlesPage> {
                                           )
                                         );
                                       } else {
+                                        await [
+                                          Permission.camera,
+                                          Permission.microphone,
+                                        ].request();
                                         Get.bottomSheet(
                                           BottomSheet(
                                             enableDrag: true,
@@ -590,6 +620,9 @@ class _HandlesPageState extends State<HandlesPage> {
                                                                 ],
                                                               ),
                                                               SizedBox(height: MQuery.height(0.01, context)),
+                                                              
+                                                              //SELECT CALL SESSION PARTICIPANT (LISTTILE ERRORS)
+                                                              
                                                               Expanded(
                                                                 flex: 7,
                                                                 child: Container(
@@ -647,6 +680,8 @@ class _HandlesPageState extends State<HandlesPage> {
                                                                     },
                                                                   ),
                                                                 ),
+                                                                
+                                                                //---
                                                             ),
                                                           ],
                                                         )

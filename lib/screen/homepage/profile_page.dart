@@ -21,7 +21,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-
     nameController.text = "";
     jobController.text = "";
     companyController.text = "";
@@ -158,7 +157,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400,
-                                              color: Palette.primary)),
+                                              color: Palette.primary)
+                                          ),
                                     ),
                                   )
                                 : SizedBox(),
@@ -402,18 +402,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     ),
                                                     decoration: InputDecoration(
                                                         hintStyle: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.black
-                                                                .withOpacity(0.4)),
-                                                        hintText:
-                                                            "Enter your company address here...",
+                                                          fontSize: 16,
+                                                          color: Colors.black.withOpacity(0.4)
+                                                        ),
+                                                        hintText: "Enter your company address here...",
                                                         contentPadding:
                                                             EdgeInsets.fromLTRB(
                                                                 15, 10, 15, 10),
                                                         border: InputBorder.none),
                                                     onFieldSubmitted: (value) {
-                                                      _userProvider.updateCompanyAddress(
-                                                          addressController.text);
+                                                      _userProvider.updateCompanyAddress(addressController.text);
                                                     }),
                                               ),
                                             ),

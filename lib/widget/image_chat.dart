@@ -210,7 +210,7 @@ class _ImageChatState extends State<ImageChat> {
         ? SizedBox()
         : widget.sender == widget.userID
             ? VisibilityDetector(
-              key: Key("$widget.index"),
+              key: Key("${widget.index}"),
               onVisibilityChanged: (VisibilityInfo info) {
 
                 if(!(widget.deletedBy.indexOf(widget.userID) >= 0)){
@@ -368,11 +368,11 @@ class _ImageChatState extends State<ImageChat> {
                                                     imageURL: widget.imageURL,
                                                     timeStamp: widget.timestamp,
                                                     sender: snapshot.data!.name,
-                                                    heroTag: "image-$widget.index",
+                                                    heroTag: "image-${widget.index}",
                                                     content: widget.content));
                                               },
                                               child: Hero(
-                                                tag: "image-$widget.index",
+                                                tag: "image-${widget.index}",
                                                 child: Stack(
                                                   alignment: Alignment.bottomRight,
                                                   children: [
@@ -471,7 +471,7 @@ class _ImageChatState extends State<ImageChat> {
                   }),
             )
             : VisibilityDetector(
-              key: Key("$widget.index"),
+              key: Key("${widget.index}"),
               onVisibilityChanged: (VisibilityInfo info) {
 
                 if(!(widget.deletedBy.indexOf(widget.userID) >= 0)){
@@ -661,11 +661,11 @@ class _ImageChatState extends State<ImageChat> {
                                               imageURL: widget.imageURL,
                                               timeStamp: widget.timestamp,
                                               sender: snapshot.data!.name,
-                                              heroTag: "image-$widget.index",
+                                              heroTag: "image-${widget.index}",
                                               content: widget.content));
                                         },
                                         child: Hero(
-                                          tag: "image-$widget.index",
+                                          tag: "image-${widget.index}",
                                           child: Stack(
                                             alignment: Alignment.bottomRight,
                                             children: [
