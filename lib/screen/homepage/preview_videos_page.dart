@@ -137,8 +137,8 @@ class _PreviewVideosPageState extends State<PreviewVideosPage> {
                     child: Stack(
                       alignment: Alignment.bottomCenter,
                       children: [
-                        Expanded(
-                          flex: 9,
+                        Container(
+                          height: MQuery.height(0.9, context),
                           child: PageView.builder(
                             itemCount: widget.selectedEntities.length,
                             itemBuilder: (context, index){

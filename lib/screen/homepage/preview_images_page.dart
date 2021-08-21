@@ -57,7 +57,7 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.black,
               appBar: AppBar(
-              centerTitle: false,
+                centerTitle: false,
                 backgroundColor: Colors.black.withOpacity(0.5),
                 toolbarHeight: MQuery.height(0.07, context),
                 leading: IconButton(
@@ -124,14 +124,15 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                     child: Stack(
                       alignment: Alignment.bottomCenter,
                       children: [
-                        Expanded(
-                          flex: 9,
+                        Container(
+                          height: MQuery.height(0.9, context),
                           child: PageView.builder(
                             itemCount: widget.selectedEntities.length,
                             itemBuilder: (context, index){
                               return FutureBuilder<File?>(
                                 future: widget.selectedEntities.toList()[index].loadFile(),
                                 builder: (context, snapshot) {
+                                  print(snapshot.data);
                                   return snapshot.hasData
                                   ? PinchZoom(
                                       image: Image.file(snapshot.data!),
@@ -141,9 +142,7 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                                       onZoomStart: (){print('Start zooming');},
                                       onZoomEnd: (){print('Stop zooming');},
                                     )
-                                  : Center(
-                                      child: CircularProgressIndicator(color: Palette.primary)
-                                  );
+                                  : SizedBox();
                                 }
                               );
                             }

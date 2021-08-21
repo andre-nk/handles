@@ -52,7 +52,10 @@ class _CallPageState extends State<CallPage> {
                     appId: "33a7608a9e714097bb913a6e7e6ba3a2",
                     channelName: widget.handlesID
                   ),
-                  enabledPermission: [],
+                  enabledPermission: [
+                    Permission.camera,
+                    Permission.microphone,
+                  ],
                 ),
                 handlesID: widget.handlesID,
                 userID: widget.userID,

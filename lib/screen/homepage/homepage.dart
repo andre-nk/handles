@@ -167,7 +167,6 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                   } else {
                     _currentUserProvider.whenData((user){
                       if(user.createdHandles!.length < 2){
-                        print("abc");
                         Get.to(() => HandlesCreatorPage(), transition: Transition.cupertino);
                       } else {
                         showDialog(

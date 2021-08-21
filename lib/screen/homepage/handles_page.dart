@@ -507,10 +507,6 @@ class _HandlesPageState extends State<HandlesPage> {
                                             isLoading: true
                                           ));
                                         } else {
-                                          await [
-                                            Permission.camera,
-                                            Permission.microphone,
-                                          ].request();
 
                                           _callProvider.joinCallChannel(handles.id);
                                           Get.to(() => CallPage(

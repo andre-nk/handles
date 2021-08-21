@@ -20,92 +20,20 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
         final _purchasesProvider = watch(purchasesProvider);
 
-        //DISPLAY PRODUCTS && GET CURRENT USER'S ENTITLEMENT
-        Future<List<Package>> displayProducts() async {
-          try{
-            await _purchasesProvider.init();
-            PurchaserInfo purchaserInfo = await Purchases.getPurchaserInfo();
-            if ((purchaserInfo.entitlements.all['pro'] != null && purchaserInfo.entitlements.all['pro']!.isActive == true)) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          _purchasesProvider.getPurchaserInfo().then((value){
+            if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true)){
               setState(() {
                 userStatus = Status.pro;
-              });
-              late Offerings offerings;
-              try {
-                offerings = await Purchases.getOfferings();
-              } on PlatformException catch (e) {
-                print(e);
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              }
-
-              // ignore: unnecessary_null_comparison
-              if (offerings == null || offerings.current == null) {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              } else {
-                return offerings.current!.availablePackages;
-              }
-            } else if ((purchaserInfo.entitlements.all['pro_unlimited'] != null && purchaserInfo.entitlements.all['pro_unlimited']!.isActive == true)) {
+              });        
+            } else if ((value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
               setState(() {
                 userStatus = Status.pro_unlimited;
-              });
-              late Offerings offerings;
-              try {
-                offerings = await Purchases.getOfferings();
-              } on PlatformException catch (e) {
-                print(e);
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              }
-
-              // ignore: unnecessary_null_comparison
-              if (offerings == null || offerings.current == null) {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              } else {
-                return offerings.current!.availablePackages;
-              }
+              }); 
             } else {
-              late Offerings offerings;
-              try {
-                offerings = await Purchases.getOfferings();
-              } on PlatformException catch (e) {
-                print(e);
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              }
-
-              // ignore: unnecessary_null_comparison
-              if (offerings == null || offerings.current == null) {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ShowDialogToDismiss(
-                    title: "Error", content: "Cannot retrieve subscription items", buttonText: 'OK')
-                );
-              } else {
-                return offerings.current!.availablePackages;
-              }
             }
-          } catch (e){
-            print(e);
-          }
-          return [];
-        }
+          });
+        });
 
         return Scaffold(
           appBar: AppBar(
@@ -124,7 +52,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             ),
           ),
           body: FutureBuilder<List<Package>>(
-            future: displayProducts(),
+            future: _purchasesProvider.displayProducts(context),
             builder: (context, snapshot){
               return snapshot.hasData
               ? SingleChildScrollView(
@@ -225,7 +153,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                     ),
                                     SizedBox(height: MQuery.height(0.02, context)),
                                     Text(
-                                      "Join a Handles and its feature via invitation-only and display your personal informations only on your profile",
+                                      "Create only one Handle group chat for your team or join it via invitation from your colleague and display your personal info on your profile",
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         height: 1.5,
