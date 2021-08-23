@@ -2,6 +2,7 @@ part of "widgets.dart";
 
 class MilestoneDialog extends ConsumerWidget {
   final String handlesID;
+  final String handlesPaymentInstructions;
   final String userID;
   final String projectID;
   final String milestoneID;
@@ -16,6 +17,7 @@ class MilestoneDialog extends ConsumerWidget {
   const MilestoneDialog({
     this.fee,
     this.dueDate,
+    required this.handlesPaymentInstructions,
     required this.milestoneID,
     required this.handlesID,
     required this.userID,
@@ -62,11 +64,13 @@ class MilestoneDialog extends ConsumerWidget {
               ),
               SizedBox(height: MQuery.height(0.005, context)),
               Text(
-                NumberFormat.simpleCurrency(
-                  locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                  ? 'en_$localeModel!["code"]'
-                  : localeModel!['code']
-                ).format(this.fee),
+                this.fee == 0
+                ? ""
+                : NumberFormat.simpleCurrency(
+                    locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                    ? 'en_$localeModel!["code"]'
+                    : localeModel!['code']
+                  ).format(this.fee),
                 style: TextStyle(
                   fontSize: 16,
                   color: Palette.primaryText,
@@ -158,23 +162,101 @@ class MilestoneDialog extends ConsumerWidget {
                             textColor: Colors.white,
                             color: Palette.primary,
                             method: (){
-                              _chatProvider.markMilestoneAsWorking(this.projectID, this.milestoneID);
+                              _chatProvider.markMilestoneAsWorking(this.projectID, this.milestoneID, this.milestoneName, this.handlesID);
                               Get.back();
                             }
                           )
                         : this.status == ProjectStatus.in_progress
-                          ? Button(
-                              width: double.infinity,
-                              height: MQuery.height(0.05, context),
-                              title: "Mark as Done",
-                              textColor: Colors.white,
-                              color: Palette.primary,
-                              method: (){
-                                _chatProvider.markMilestoneAsCompleted(this.projectID, this.milestoneID);
-                                Get.back();
-                              }
-                            )
-                          : SizedBox(),
+                        ? Button(
+                            width: double.infinity,
+                            height: MQuery.height(0.05, context),
+                            title: "Mark as Done",
+                            textColor: Colors.white,
+                            color: Palette.primary,
+                            method: (){
+                              _chatProvider.markMilestoneAsCompleted(this.projectID, this.milestoneID, this.milestoneName, this.handlesID);
+                              Get.back();
+                            }
+                          )
+                        : Button(
+                            width: double.infinity,
+                            height: MQuery.height(0.05, context),
+                            title: "View Payment Instructions",
+                            textColor: Colors.white,
+                            color: Palette.primary,
+                            method: (){
+                              Get.back();
+                              Get.dialog(
+                                Dialog(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: MQuery.height(0.75, context)
+                                    ),
+                                    child: Container(
+                                      width: MQuery.width(0.9, context),
+                                      padding: EdgeInsets.all(MQuery.height(0.02, context)),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Handles DevTeam Payment Instructions",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Palette.primaryText,
+                                                fontWeight: FontWeight.w500
+                                              ),
+                                            ),
+                                            SizedBox(height: MQuery.height(0.01, context)),
+                                            Text(
+                                            "Add your bank account and payment instructions so your clients know how to pay you",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Palette.primaryText,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                            SizedBox(height: MQuery.height(0.02, context)),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Palette.formColor,
+                                                borderRadius: BorderRadius.all(Radius.circular(5))
+                                              ),
+                                              child: TextFormField(
+                                                readOnly: true,
+                                                maxLines: 6,
+                                                minLines: 4,
+                                                initialValue: this.handlesPaymentInstructions,
+                                                keyboardType: TextInputType.text,
+                                                cursorColor: Palette.primary,
+                                                style: TextStyle(
+                                                  fontSize: 16
+                                                ),
+                                                decoration: InputDecoration(
+                                                  isDense: true,         
+                                                  fillColor: Palette.primary,
+                                                  hintStyle: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black.withOpacity(0.4)
+                                                  ),
+                                                  hintText: "Payment instructions isn't provided yet",
+                                                  contentPadding: EdgeInsets.all(15),
+                                                  border: InputBorder.none
+                                                ),
+                                              ),
+                                            ),
+                                          ]
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              );
+                            }
+                          ),
                         SizedBox(height: MQuery.height(0.01, context)),
                         this.paymentStatus == ProjectPaymentStatus.unpaid
                         ? Button(
@@ -184,7 +266,7 @@ class MilestoneDialog extends ConsumerWidget {
                             textColor: Colors.white,
                             color: Palette.secondary,
                             method: (){
-                              _chatProvider.markMilestoneAsPaid(this.projectID, this.milestoneID);
+                              _chatProvider.markMilestoneAsPaid(this.projectID, this.milestoneID, this.milestoneName, this.handlesID);
                               Get.back();
                             }
                           )

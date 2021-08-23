@@ -3,12 +3,14 @@ part of "../pages.dart";
 class ProjectDetailedPage extends StatefulWidget {
 
   final ProjectModel projectModel;
+  final String handlesPaymentInstructions;
   final String currentUserID;
   final String handlesID;
 
   const ProjectDetailedPage({
     Key? key,
     required this.projectModel,
+    required this.handlesPaymentInstructions,
     required this.currentUserID,
     required this.handlesID
   }) : super(key: key);
@@ -33,6 +35,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
       builder: (ctx, watch,child) {
 
         final _projectChatMilestonesProvider = watch(projectChatMilestonesProvider(widget.projectModel.id));
+        final _chatProvider = watch(chatProvider);
         
         Map? localeModel;
         final _userProvider = watch(currentUserProvider);
@@ -87,7 +90,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Container(
-                height: MQuery.height(1.1, context),
+                height: MQuery.height(1, context),
                 child: Column(
                   children: [
                     Expanded(
@@ -95,12 +98,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                       child: Container(
                         width: MQuery.height(1, context),
                         color: Palette.handlesBackground,
-                        child: AdaptiveIcon(
-                          android: Icons.shopping_cart,
-                          iOS: CupertinoIcons.cart_fill,
-                          color: Palette.primary,
-                          size: 32
-                        )
+                        child: SvgPicture.asset("assets/cart.svg", height: 14, width: 14, color: Palette.primary, fit:BoxFit.scaleDown),
                       ),
                     ),
                     Expanded(
@@ -165,11 +163,13 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                 _projectChatMilestonesProvider.when(
                                   data: (milestones){
                                     return Text(
-                                      NumberFormat.simpleCurrency(
-                                        locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                                        ? 'en_$localeModel!["code"]'
-                                        : localeModel!['code']
-                                      ).format(calculateTotalFee(milestones)),
+                                      calculateTotalFee(milestones) == 0
+                                      ? ""
+                                      : NumberFormat.simpleCurrency(
+                                          locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                                          ? 'en_$localeModel!["code"]'
+                                          : localeModel!['code']
+                                        ).format(calculateTotalFee(milestones)),
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         fontSize: 16,
@@ -266,6 +266,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                               Get.dialog(
                                                 Dialog(
                                                   child: MilestoneDialog(
+                                                    handlesPaymentInstructions: widget.handlesPaymentInstructions,
                                                     milestoneID: target.id,
                                                     handlesID: widget.handlesID,
                                                     userID: widget.currentUserID,
@@ -318,11 +319,13 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            NumberFormat.simpleCurrency(
-                                                              locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                                                              ? 'en_$localeModel!["code"]'
-                                                              : localeModel!['code']
-                                                            ).format(target.fee),
+                                                            target.fee == 0
+                                                            ? ""
+                                                            : NumberFormat.simpleCurrency(
+                                                                locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                                                                ? 'en_$localeModel!["code"]'
+                                                                : localeModel!['code']
+                                                              ).format(target.fee),
                                                             style: TextStyle(
                                                               fontSize: 14,
                                                               color: Palette.primaryText,
@@ -419,29 +422,18 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                               }
                             ),
                             SizedBox(height: MQuery.height(0.01, context)),
-                            widget.projectModel.paymentStatus == ProjectPaymentStatus.paid
-                            ? Button(
-                                width: double.infinity - MQuery.width(0.075, context),
-                                color: Palette.secondary,
-                                method: (){},
-                                textColor: Colors.white,
-                                title: "SERVICE HAS BEEN PAID",
-                              )
-                            : widget.projectModel.paymentStatus == ProjectPaymentStatus.unpaid
-                            ? Button(
-                                width: double.infinity,
-                                color: Palette.secondary,
-                                method: (){},
-                                textColor: Colors.white,
-                                title: "VIEW MILESTONE",
-                              )
-                            : SizedBox(),
-                            SizedBox(height: MQuery.height(0.01,  context)),
                             widget.projectModel.status == ProjectStatus.pending
                             ? Button(
                                 width: double.infinity - MQuery.width(0.075, context),
                                 color: Palette.primary,
-                                method: (){},
+                                method: (){
+                                  _chatProvider.updateProjectStatus(
+                                    "in_progress",
+                                    widget.projectModel.id,
+                                    widget.projectModel.serviceName,
+                                    widget.handlesID
+                                  );
+                                },
                                 textColor: Colors.white,
                                 title: "MARK AS WORKING",
                               )
@@ -449,11 +441,111 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                             ? Button(
                                 width: double.infinity,
                                 color: Palette.primary,
-                                method: (){},
+                                method: (){
+                                  _chatProvider.updateProjectStatus(
+                                    "completed",
+                                    widget.projectModel.id,
+                                    widget.projectModel.serviceName,
+                                    widget.handlesID
+                                  );
+                                },
                                 textColor: Colors.white,
                                 title: "MARK AS COMPLETED",
                               )
                             : SizedBox(),
+                            SizedBox(height: MQuery.height(0.01, context)),
+                            widget.projectModel.paymentStatus == ProjectPaymentStatus.unpaid
+                            ? Button(
+                                width: double.infinity - MQuery.width(0.075, context),
+                                color: Palette.primary,
+                                method: (){
+                                  _chatProvider.updateProjectPaymentStatus(
+                                    "paid",
+                                    widget.projectModel.id,
+                                    widget.projectModel.serviceName,
+                                    widget.handlesID
+                                  );
+                                },
+                                textColor: Colors.white,
+                                title: "MARK AS PAID",
+                              )
+                            : Button(
+                                width: double.infinity - MQuery.width(0.075, context),
+                                color: Palette.primary,
+                                method: (){
+                                  Get.dialog(
+                                    Dialog(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxHeight: MQuery.height(0.75, context)
+                                        ),
+                                        child: Container(
+                                          width: MQuery.width(0.9, context),
+                                          padding: EdgeInsets.all(MQuery.height(0.02, context)),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Handles DevTeam Payment Instructions",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Palette.primaryText,
+                                                    fontWeight: FontWeight.w500
+                                                  ),
+                                                ),
+                                                SizedBox(height: MQuery.height(0.01, context)),
+                                                Text(
+                                                "Add your bank account and payment instructions so your clients know how to pay you",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Palette.primaryText,
+                                                    fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                                SizedBox(height: MQuery.height(0.02, context)),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Palette.formColor,
+                                                    borderRadius: BorderRadius.all(Radius.circular(5))
+                                                  ),
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    maxLines: 6,
+                                                    minLines: 4,
+                                                    initialValue: widget.handlesPaymentInstructions,
+                                                    keyboardType: TextInputType.text,
+                                                    cursorColor: Palette.primary,
+                                                    style: TextStyle(
+                                                      fontSize: 16
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      isDense: true,         
+                                                      fillColor: Palette.primary,
+                                                      hintStyle: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black.withOpacity(0.4)
+                                                      ),
+                                                      hintText: "Payment instructions isn't provided yet",
+                                                      contentPadding: EdgeInsets.all(15),
+                                                      border: InputBorder.none
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]
+                                            )
+                                          )
+                                        )
+                                      )
+                                    )
+                                  );
+                                },
+                                textColor: Colors.white,
+                                title: "View Payment Instructions",
+                              )
                           ]
                         )
                       ),

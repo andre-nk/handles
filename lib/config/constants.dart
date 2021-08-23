@@ -19,11 +19,7 @@ class Constants{
     ),
     "Docs": SvgPicture.asset("assets/mdi_file-document.svg", height: 18, width: 18),
     "Meetings": SvgPicture.asset("assets/mdi_presentation-play.svg", height: 18, width: 18),
-    "Services": AdaptiveIcon(
-      android: Icons.shopping_cart,
-      iOS: CupertinoIcons.cart_fill,
-      color: Colors.white, size: 18
-    )
+    "Services": SvgPicture.asset("assets/cart.svg", height: 18, width: 18, color: Colors.white),
   };
 
   static Map<String, Widget> mediaAvatar = {
@@ -39,14 +35,10 @@ class Constants{
     ),
     "Docs": SvgPicture.asset("assets/mdi_file-document.svg", height: 28, width: 28),
     "Meetings": SvgPicture.asset("assets/mdi_presentation-play.svg", height: 28, width: 28),
-    "Services": AdaptiveIcon(
-      android: Icons.shopping_cart,
-      iOS: CupertinoIcons.cart_fill,
-      color: Colors.white, size: 28
-    ),
-    "Audio": AdaptiveIcon(
-      android: Icons.mic,
-      iOS: CupertinoIcons.mic_fill,
+    "Services": SvgPicture.asset("assets/cart.svg", height: 30, width: 30, color: Colors.white),
+    "Camera": AdaptiveIcon(
+      android: Icons.photo_camera,
+      iOS: CupertinoIcons.camera_fill,
       color: Colors.white, size: 28,
     ),
   };

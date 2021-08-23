@@ -267,10 +267,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "Your Payment Details",
+                                                "Add your bank account and payment instructions so your clients know how to pay you",
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                   color: Palette.primaryText,
                                                   fontWeight: FontWeight.w500
                                                 ),
@@ -281,7 +281,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                                   color: Palette.formColor,
                                                   borderRadius: BorderRadius.all(Radius.circular(5))
                                                 ),
-                                                child: TextFormField(
+                                                child: TextField(
                                                   readOnly: false,
                                                   maxLines: 6,
                                                   minLines: 4,
@@ -298,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                                       fontSize: 16,
                                                       color: Colors.black.withOpacity(0.4)
                                                     ),
-                                                    hintText: "Payment details hasn't provided yet",
+                                                    hintText: "Payment instructions isn't provided yet",
                                                     contentPadding: EdgeInsets.all(15),
                                                     border: InputBorder.none
                                                   ),
@@ -316,7 +316,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 vertical: BorderSide(color: Colors.grey.withOpacity(0.5))
                               ),
                               title: Text(
-                                "Payment details",
+                                "Payment instructions",
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,

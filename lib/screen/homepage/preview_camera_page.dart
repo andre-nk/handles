@@ -1,27 +1,25 @@
 part of "../pages.dart";
 
-class PreviewImagesPage extends StatefulWidget {
+class PreviewCameraPage extends StatefulWidget {
 
   final String handlesID;
   final String replyTo;
-  final Set<AssetEntity> selectedEntities;
+  final XFile? image;
 
-  const PreviewImagesPage({ Key? key, required this.selectedEntities, required this.handlesID,  required this.replyTo}) : super(key: key);
+  const PreviewCameraPage({ Key? key, required this.image, required this.handlesID,  required this.replyTo}) : super(key: key);
 
   @override
-  _PreviewImagesPageState createState() => _PreviewImagesPageState();
+  _PreviewCameraPageState createState() => _PreviewCameraPageState();
 }
 
-class _PreviewImagesPageState extends State<PreviewImagesPage> {
+class _PreviewCameraPageState extends State<PreviewCameraPage> {
 
   int globalID = 0;
-  late AssetEntity assetMedia;
   TextEditingController chatController = TextEditingController();
 
   @override
   void initState() { 
     super.initState();
-    assetMedia = widget.selectedEntities.first;
   }
 
   @override
@@ -37,12 +35,8 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
             content: NotificationContent(
               id: id,
               channelKey: 'progress_bar',
-              title: 'Sending ${assetMedia.title}',
+              title: 'Sending ${widget.image!.name}',
               body: '',
-              payload: {
-                'file': '${assetMedia.title}',
-                'path': '${assetMedia.relativePath}'
-              },
               notificationLayout: NotificationLayout.ProgressBar,
               progress: null,
               locked: true
@@ -70,7 +64,7 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                   },
                 ),
                 title: Font.out(
-                  "Send ${widget.selectedEntities.length} images",
+                  "Send an image",
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   textAlign: TextAlign.start,
@@ -89,26 +83,22 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                         Random().nextInt(1000)
                       );
 
-                      widget.selectedEntities.forEach((element) {
-                        element.file.then((file){
-                          _chatProvider.uploadImageURL(file!.path, snapshot.data!.name).then((mediaURL){
-                            _chatProvider.sendImageChat(
-                              widget.handlesID,
-                              ChatModel(
-                                replyTo: widget.replyTo,
-                                id: Uuid().v4(),
-                                type: ChatType.image,
-                                content: chatController.text,
-                                mediaURL: mediaURL,
-                                readBy: [],
-                                deletedBy: [],
-                                timestamp: DateTime.now(),
-                                sender: "",
-                                isPinned: false
-                              )
-                            );
-                          });
-                        });
+                      _chatProvider.uploadImageURL(widget.image!.path, snapshot.data!.name).then((mediaURL){
+                        _chatProvider.sendImageChat(
+                          widget.handlesID,
+                          ChatModel(
+                            replyTo: widget.replyTo,
+                            id: Uuid().v4(),
+                            type: ChatType.image,
+                            content: chatController.text,
+                            mediaURL: mediaURL,
+                            readBy: [],
+                            deletedBy: [],
+                            timestamp: DateTime.now(),
+                            sender: "",
+                            isPinned: false
+                          )
+                        );
                       });
 
                       Get.off(() => HandlesPage(handlesID: widget.handlesID, isFromSendingFiles: true), transition: Transition.cupertino);
@@ -126,26 +116,13 @@ class _PreviewImagesPageState extends State<PreviewImagesPage> {
                       children: [
                         Container(
                           height: MQuery.height(0.9, context),
-                          child: PageView.builder(
-                            itemCount: widget.selectedEntities.length,
-                            itemBuilder: (context, index){
-                              return FutureBuilder<File?>(
-                                future: widget.selectedEntities.toList()[index].loadFile(),
-                                builder: (context, snapshot) {
-                                  print(snapshot.data);
-                                  return snapshot.hasData
-                                  ? PinchZoom(
-                                      image: Image.file(snapshot.data!),
-                                      zoomedBackgroundColor: Colors.black,
-                                      resetDuration: const Duration(milliseconds: 100),
-                                      maxScale: 1,
-                                      onZoomStart: (){print('Start zooming');},
-                                      onZoomEnd: (){print('Stop zooming');},
-                                    )
-                                  : SizedBox();
-                                }
-                              );
-                            }
+                          child: PinchZoom(
+                            image: Image.file(File(widget.image!.path)),
+                            zoomedBackgroundColor: Colors.black,
+                            resetDuration: const Duration(milliseconds: 100),
+                            maxScale: 1,
+                            onZoomStart: (){print('Start zooming');},
+                            onZoomEnd: (){print('Stop zooming');},
                           )
                         ),
                       ],

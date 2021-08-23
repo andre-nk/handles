@@ -18,6 +18,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
       builder: (ctx, watch,child) {
 
         final _currentUserProvider = watch(currentUserProvider);
+        final _purchasesProvider = watch(purchasesProvider);
         final _handlesProvider = watch(handlesProvider);
 
         return _currentUserProvider.when(
@@ -52,168 +53,421 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                             iOS: CupertinoIcons.restart,
                           ),
                           onPressed: (){
-                            _currentUserProvider.whenData((user){
-                              if(user.createdHandles!.length >= 5){
-                                showDialog(
-                                  context: context,
-                                  builder: (context){
-                                    return Platform.isAndroid
-                                    ? AlertDialog(
-                                        title: Text(
-                                          "You have 5 active Handles!",
-                                        ),
-                                        content: Text(
-                                          'Subscribing to "Pro Unlimited" will let you to have unlimited amount of active Handles, or you can archive or delete unused Handles to create another one'
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("CANCEL"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.warning,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("SUBSCRIBE"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.primary,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                              Get.to(() => SubscriptionPage());
-                                            },
-                                          )
-                                        ],
-                                      )
-                                    : CupertinoAlertDialog(
-                                        title: Text(
-                                          "You have 5 active Handles!",
-                                        ),
-                                        content: Text(
-                                          'Subscribing to "Pro Unlimited" will let you to have unlimited amount of active Handles, or you can archive or delete unused Handles to create another one'
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("CANCEL"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.warning,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("SUBSCRIBE"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.primary,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                              Get.to(() => SubscriptionPage());
-                                            },
-                                          )
-                                        ],
+                            _purchasesProvider.getPurchaserInfo().then((value){
+                              _currentUserProvider.whenData((user){
+                                if((value.entitlements.all['pro'] != null && value.entitlements.all['pro']!.isActive == true)){
+                                  _currentUserProvider.whenData((user){
+                                    if(user.createdHandles!.length <= 6){
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return Platform.isAndroid
+                                          ? AlertDialog(
+                                              title: Text(
+                                                "Are you sure you want to restore these archived Handles?",
+                                              ),
+                                              content: Text(
+                                                "This action will make all of the selected Handles displayed in your homepage"
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("RESTORE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                    setState(() {
+                                                      selectedHandles = Set();
+                                                    });
+                                                    Get.offAll(Homepage());
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : CupertinoAlertDialog(
+                                              title: Text(
+                                                "Are you sure you want to restore these archived Handles?",
+                                              ),
+                                              content: Text(
+                                                "This action will make all of the selected Handles displayed in your homepage"
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("RESTORE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                    setState(() {
+                                                      selectedHandles = Set();
+                                                    });
+                                                    Get.offAll(Homepage());
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                        }
                                       );
-                                  }
-                                );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context){
-                                    return Platform.isAndroid
-                                    ? AlertDialog(
-                                        title: Text(
-                                          "Are you sure you want to restore these archived Handles?",
-                                        ),
-                                        content: Text(
-                                          "This action will make all of the selected Handles displayed in your homepage"
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("CANCEL"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.warning,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("RESTORE"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.primary,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              _handlesProvider.unarchiveHandles(selectedHandles.toList());
-                                              setState(() {
-                                                selectedHandles = Set();
-                                              });
-                                              Get.offAll(Homepage());
-                                            },
-                                          )
-                                        ],
-                                      )
-                                    : CupertinoAlertDialog(
-                                        title: Text(
-                                          "Are you sure you want to restore these archived Handles?",
-                                        ),
-                                        content: Text(
-                                          "This action will make all of the selected Handles displayed in your homepage"
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("CANCEL"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.warning,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              Get.back();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("RESTORE"),
-                                            style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                color: Palette.primary,
-                                                fontWeight: FontWeight.w500
-                                              )
-                                            ),
-                                            onPressed: (){
-                                              _handlesProvider.unarchiveHandles(selectedHandles.toList());
-                                              setState(() {
-                                                selectedHandles = Set();
-                                              });
-                                              Get.offAll(Homepage());
-                                            },
-                                          )
-                                        ],
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return Platform.isAndroid
+                                          ? AlertDialog(
+                                              title: Text(
+                                                "You have created 5 Handles!",
+                                              ),
+                                              content: Text(
+                                                'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("SUBSCRIBE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                    Get.to(() => SubscriptionPage());
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : CupertinoAlertDialog(
+                                              title: Text(
+                                                "You have created 5 Handles!",
+                                              ),
+                                              content: Text(
+                                                'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("SUBSCRIBE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                    Get.to(() => SubscriptionPage());
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                        }
                                       );
-                                  }
-                                );
-                              }
+                                    }
+                                  });
+                                } else if ((value.entitlements.all['pro_unlimited'] != null && value.entitlements.all['pro_unlimited']!.isActive == true)){
+                                  showDialog(
+                                    context: context,
+                                    builder: (context){
+                                      return Platform.isAndroid
+                                      ? AlertDialog(
+                                          title: Text(
+                                            "Are you sure you want to restore these archived Handles?",
+                                          ),
+                                          content: Text(
+                                            "This action will make all of the selected Handles displayed in your homepage"
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: Text("CANCEL"),
+                                              style: TextButton.styleFrom(
+                                                textStyle: TextStyle(
+                                                  color: Palette.warning,
+                                                  fontWeight: FontWeight.w500
+                                                )
+                                              ),
+                                              onPressed: (){
+                                                Get.back();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text("RESTORE"),
+                                              style: TextButton.styleFrom(
+                                                textStyle: TextStyle(
+                                                  color: Palette.primary,
+                                                  fontWeight: FontWeight.w500
+                                                )
+                                              ),
+                                              onPressed: (){
+                                                _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                setState(() {
+                                                  selectedHandles = Set();
+                                                });
+                                                Get.offAll(Homepage());
+                                              },
+                                            )
+                                          ],
+                                        )
+                                      : CupertinoAlertDialog(
+                                          title: Text(
+                                            "Are you sure you want to restore these archived Handles?",
+                                          ),
+                                          content: Text(
+                                            "This action will make all of the selected Handles displayed in your homepage"
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: Text("CANCEL"),
+                                              style: TextButton.styleFrom(
+                                                textStyle: TextStyle(
+                                                  color: Palette.warning,
+                                                  fontWeight: FontWeight.w500
+                                                )
+                                              ),
+                                              onPressed: (){
+                                                Get.back();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text("RESTORE"),
+                                              style: TextButton.styleFrom(
+                                                textStyle: TextStyle(
+                                                  color: Palette.primary,
+                                                  fontWeight: FontWeight.w500
+                                                )
+                                              ),
+                                              onPressed: (){
+                                                _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                setState(() {
+                                                  selectedHandles = Set();
+                                                });
+                                                Get.offAll(Homepage());
+                                              },
+                                            )
+                                          ],
+                                        );
+                                      }
+                                    );
+                                } else {
+                                  _currentUserProvider.whenData((user){
+                                    if(user.createdHandles!.length < 2){
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return Platform.isAndroid
+                                          ? AlertDialog(
+                                              title: Text(
+                                                "Are you sure you want to restore these archived Handles?",
+                                              ),
+                                              content: Text(
+                                                "This action will make all of the selected Handles displayed in your homepage"
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("RESTORE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                    setState(() {
+                                                      selectedHandles = Set();
+                                                    });
+                                                    Get.offAll(Homepage());
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : CupertinoAlertDialog(
+                                              title: Text(
+                                                "Are you sure you want to restore these archived Handles?",
+                                              ),
+                                              content: Text(
+                                                "This action will make all of the selected Handles displayed in your homepage"
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("RESTORE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    _handlesProvider.unarchiveHandles(selectedHandles.toList());
+                                                    setState(() {
+                                                      selectedHandles = Set();
+                                                    });
+                                                    Get.offAll(Homepage());
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                        }
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return Platform.isAndroid
+                                          ? AlertDialog(
+                                              title: Text(
+                                                "You have created one free Handles!",
+                                              ),
+                                              content: Text(
+                                                'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("SUBSCRIBE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                    Get.to(() => SubscriptionPage());
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : CupertinoAlertDialog(
+                                              title: Text(
+                                                "You have created one free Handles!",
+                                              ),
+                                              content: Text(
+                                                'Subscribing to "Pro Unlimited" will let you to create unlimited amount of Handles, or you can archive unused Handles to create another one'
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("CANCEL"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.warning,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("SUBSCRIBE"),
+                                                  style: TextButton.styleFrom(
+                                                    textStyle: TextStyle(
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500
+                                                    )
+                                                  ),
+                                                  onPressed: (){
+                                                    Get.back();
+                                                    Get.to(() => SubscriptionPage());
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                        }
+                                      );
+                                    }
+                                  });
+                                }
+                              });
                             });
                           }
                         ),
@@ -305,7 +559,7 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                                   );
                               }
                             );
-                          },
+                          }, 
                         )
                       ],
                     )
@@ -374,13 +628,6 @@ class _ArchivedHandlesState extends State<ArchivedHandles> {
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                             textAlign: TextAlign.start
-                          ),
-                          subtitle: Font.out(
-                            "Steve: Great! no problem. Good luck!",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            textAlign: TextAlign.start,
-                            color: Colors.black.withOpacity(0.75)
                           ),
                           trailing: Container(
                             width: MQuery.width(0.06, context),

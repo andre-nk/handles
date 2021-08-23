@@ -4,6 +4,7 @@ class MeetingModel{
   String id;
   String meetingName;
   String meetingURL;
+  String meetingLocation;
   String description;
   List<String> attendees;
   DateTime meetingStartTime;
@@ -16,6 +17,7 @@ class MeetingModel{
     required this.id,
     required this.meetingName,
     required this.meetingURL,
+    required this.meetingLocation,
     required this.description,
     required this.attendees,
     required this.meetingStartTime,

@@ -6,6 +6,7 @@ class ProjectChat extends StatefulWidget {
   final DateTime timestamp;
   final String userID;
   final String handlesID;
+  final String handlesPaymentInstructions;
   final String sender;
   final String senderRole;
   final ProjectModel projectModel;
@@ -22,7 +23,8 @@ class ProjectChat extends StatefulWidget {
     required this.isRecurring,
     required this.isPinned,
     required this.userID,
-    required this.handlesID
+    required this.handlesID,
+    required this.handlesPaymentInstructions
   }) : super(key: key);
 
   @override
@@ -94,6 +96,7 @@ class _ProjectChatState extends State<ProjectChat> {
                       GestureDetector(
                         onTap: (){
                           Get.to(() => ProjectDetailedPage(
+                            handlesPaymentInstructions: widget.handlesPaymentInstructions,
                             handlesID: widget.handlesID,
                             projectModel: this.widget.projectModel,
                             currentUserID: this.widget.userID
@@ -108,12 +111,7 @@ class _ProjectChatState extends State<ProjectChat> {
                                 color: Palette.handlesBackground,
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                               ),
-                              child: AdaptiveIcon(
-                                android: Icons.shopping_cart,
-                                iOS: CupertinoIcons.cart_fill,
-                                color: Palette.primary,
-                                size: 32
-                              )
+                              child: SvgPicture.asset("assets/cart.svg", height: 24, width: 24, color: Palette.primary),
                             ),
                             Spacer(),
                             Expanded(
@@ -138,11 +136,14 @@ class _ProjectChatState extends State<ProjectChat> {
                                     _projectChatMilestonesProvider.when(
                                       data: (milestones){
                                         return Text(
-                                          NumberFormat.simpleCurrency(
-                                            locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                                            ? 'en_$localeModel!["code"]'
-                                            : localeModel!['code']
-                                          ).format(calculateTotalFee(milestones)),
+                                          calculateTotalFee(milestones) == 0
+                                          ? ""
+                                          : NumberFormat.simpleCurrency(
+                                              locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                                              ? 'en_$localeModel!["code"]'
+                                              : localeModel!['code']
+                                              ).format(calculateTotalFee(milestones)
+                                            ),
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
                                             fontSize: 12,
@@ -203,7 +204,7 @@ class _ProjectChatState extends State<ProjectChat> {
                           color: Palette.secondary,
                           method: (){},
                           textColor: Colors.white,
-                          title: "Pay Service",
+                          title: "View",
                         )
                       : Button(
                           height: MQuery.height(0.045, context),
@@ -328,6 +329,7 @@ class _ProjectChatState extends State<ProjectChat> {
                       GestureDetector(
                         onTap: (){
                           Get.to(() => ProjectDetailedPage(
+                            handlesPaymentInstructions: widget.handlesPaymentInstructions,
                             handlesID: widget.handlesID,
                             projectModel: this.widget.projectModel,
                             currentUserID: this.widget.userID
@@ -342,12 +344,7 @@ class _ProjectChatState extends State<ProjectChat> {
                                 color: Palette.handlesBackground,
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                               ),
-                              child: AdaptiveIcon(
-                                android: Icons.shopping_cart,
-                                iOS: CupertinoIcons.cart_fill,
-                                color: Palette.primary,
-                                size: 32
-                              )
+                              child: SvgPicture.asset("assets/cart.svg", height: 24, width: 24, color: Palette.primary),
                             ),
                             Spacer(),
                             Expanded(
@@ -372,11 +369,14 @@ class _ProjectChatState extends State<ProjectChat> {
                                     _projectChatMilestonesProvider.when(
                                       data: (milestones){
                                         return Text(
-                                          NumberFormat.simpleCurrency(
-                                            locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                                            ? 'en_$localeModel!["code"]'
-                                            : localeModel!['code']
-                                          ).format(calculateTotalFee(milestones)),
+                                          calculateTotalFee(milestones) == 0
+                                          ? ""
+                                          : NumberFormat.simpleCurrency(
+                                              locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                                              ? 'en_$localeModel!["code"]'
+                                              : localeModel!['code']
+                                              ).format(calculateTotalFee(milestones)
+                                            ),
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
                                             fontSize: 12,

@@ -264,6 +264,7 @@ class ChatServices with ChangeNotifier{
     .set({
       "meetingName": meetChat.meetingName,
       "meetingURL": meetChat.meetingURL,
+      "meetingLocation": meetChat.meetingLocation,
       "description": meetChat.description,
       "startTime": meetChat.meetingStartTime,
       "endTime": meetChat.meetingEndTime,
@@ -298,6 +299,7 @@ class ChatServices with ChangeNotifier{
     .set({
       "meetingName": meetingModel.meetingName,
       "meetingURL": meetingModel.meetingURL,
+      "meetingLocation": meetingModel.meetingLocation,
       "description": meetingModel.description,
       "startTime": meetingModel.meetingStartTime,
       "endTime": meetingModel.meetingEndTime,
@@ -351,11 +353,64 @@ class ChatServices with ChangeNotifier{
         meetingStartTime: (doc["startTime"] as Timestamp).toDate(),
         attendees: (doc["attendees"] as List<dynamic>).cast<String>(),
         meetingURL: doc["meetingURL"],
+        meetingLocation: doc["meetingLocation"],
         description: doc["description"],
         meetingName: doc["meetingName"],
         isPinned: doc["isPinned"],
         sender: doc["sender"]
       );
+    });
+  }
+
+  Future<void> updateProjectStatus(String value, String projectID, String projectName, String handlesID){
+    return firestore
+    .collection("project_chat")
+    .doc(projectID)
+    .update({
+      "status": value
+    }).then((_){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} marks $projectName ${value == "in_progress" ? "as working" : "as completed"}",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
+    });
+  }
+
+  Future<void> updateProjectPaymentStatus(String value, String projectID, String projectName, String handlesID){
+    return firestore
+    .collection("project_chat")
+    .doc(projectID)
+    .update({
+      "paymentStatus": value
+    }).then((_){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} marks $projectName as paid",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
     });
   }
 
@@ -533,7 +588,7 @@ class ChatServices with ChangeNotifier{
     .delete();
   }
 
-  Future<void> markMilestoneAsWorking(String projectChatID, String milestoneID) async {
+  Future<void> markMilestoneAsWorking(String projectChatID, String milestoneID, String milestoneName, String handlesID) async {
     return firestore
     .collection("project_chat")
     .doc(projectChatID)
@@ -541,10 +596,27 @@ class ChatServices with ChangeNotifier{
     .doc(milestoneID)
     .update({
       "status": "in_progress"
+    }).then((_){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} marks $milestoneName as working",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
     });
   }
 
-  Future<void> markMilestoneAsCompleted(String projectChatID, String milestoneID) async {
+  Future<void> markMilestoneAsCompleted(String projectChatID, String milestoneID, String milestoneName, String handlesID) async {
     return firestore
     .collection("project_chat")
     .doc(projectChatID)
@@ -552,10 +624,27 @@ class ChatServices with ChangeNotifier{
     .doc(milestoneID)
     .update({
       "status": "completed"
+    }).then((_){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} marks $milestoneName as completed",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
     });
   }
 
-  Future<void> markMilestoneAsPaid(String projectChatID, String milestoneID) async {
+  Future<void> markMilestoneAsPaid(String projectChatID, String milestoneID, String milestoneName, String handlesID) async {
     return firestore
     .collection("project_chat")
     .doc(projectChatID)
@@ -563,6 +652,23 @@ class ChatServices with ChangeNotifier{
     .doc(milestoneID)
     .update({
       "paymentStatus": "paid"
+    }).then((_){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} marks $milestoneName as paid",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
     });
   }
 

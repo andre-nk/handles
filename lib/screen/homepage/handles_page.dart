@@ -59,6 +59,7 @@ class _HandlesPageState extends State<HandlesPage> {
       "Docs",
       "Meetings",
       "Services",
+      "Camera"
     ];
 
     void selectChat(int index){
@@ -533,7 +534,7 @@ class _HandlesPageState extends State<HandlesPage> {
                                               height: MQuery.height(0.025, context),
                                               child: Center(
                                                 child: Text(
-                                                  "This Handle call channel is currently used",
+                                                  "This Chat call channel is currently used",
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 16,
@@ -1067,6 +1068,7 @@ class _HandlesPageState extends State<HandlesPage> {
                                       ? watch(projectChatProvider(chatList[index].id)).when(
                                           data: (projectModel){
                                             return ProjectChat(
+                                              handlesPaymentInstructions: handles.paymentInstructions ?? "",
                                               handlesID: handles.id,
                                               index: index,
                                               userID: currentUser.id,
@@ -1221,7 +1223,7 @@ class _HandlesPageState extends State<HandlesPage> {
                                                 )
                                               ),
                                               SizedBox(height: MQuery.height(0, context)),
-                                              TextFormField(
+                                              TextField(
                                                 keyboardType: TextInputType.multiline,
                                                 controller: chatController,
                                                 maxLines: isKeyboardOpen && isReplying != null
@@ -1246,7 +1248,7 @@ class _HandlesPageState extends State<HandlesPage> {
                                               ),
                                             ],
                                           )
-                                        : TextFormField(
+                                        : TextField(
                                             keyboardType: TextInputType.multiline,
                                             controller: chatController,
                                             maxLines: isChatting ? 6 : 1,
@@ -1373,6 +1375,68 @@ class _HandlesPageState extends State<HandlesPage> {
                                                           height: MQuery.height(0.1, context),
                                                           child: ElevatedButton(
                                                             onPressed: () async {
+                                                              await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50).then((value){
+                                                                if(value != null){
+                                                                  Get.to(() => PreviewCameraPage(image: value, handlesID: widget.handlesID, replyTo: isReplying != null ? isReplying!.id : ""));
+                                                                }
+                                                              });
+                                                            },
+                                                            child: Constants.mediaAvatar[keys.last],
+                                                            style: ElevatedButton.styleFrom(
+                                                              shape: CircleBorder(),
+                                                              padding: EdgeInsets.all(20),
+                                                              primary: Palette.primary, // <-- Button color
+                                                              onPrimary: Palette.primary, // <-- Splash color
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: MQuery.height(0.025, context)),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        Container(
+                                                          height: MQuery.height(0.1, context),
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Get.back();
+                                                              Get.to(() => MeetingCreator(
+                                                                handlesID: handles.id
+                                                              ), transition: Transition.cupertino);
+                                                            },
+                                                            child: Constants.mediaAvatar[keys[3]],
+                                                            style: ElevatedButton.styleFrom(
+                                                              shape: CircleBorder(),
+                                                              padding: EdgeInsets.all(20),
+                                                              primary: Palette.primary, // <-- Button color
+                                                              onPrimary: Palette.primary, // <-- Splash color
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          height: MQuery.height(0.1, context),
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Get.back();
+                                                              Get.to(() => ProjectCreator(
+                                                                handlesID: handles.id
+                                                              ), transition: Transition.cupertino);
+                                                            },
+                                                            child: Constants.mediaAvatar[keys[4]],
+                                                            style: ElevatedButton.styleFrom(
+                                                              shape: CircleBorder(),
+                                                              padding: EdgeInsets.all(20),
+                                                              primary: Palette.primary, // <-- Button color
+                                                              onPrimary: Palette.primary, // <-- Splash color
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          height: MQuery.height(0.1, context),
+                                                          child: ElevatedButton(
+                                                            onPressed: () async {
+                                                              Get.back();
                                                               FilePickerResult? result = await FilePicker.platform.pickFiles();
                                                               if(result != null) {
                                                                 PlatformFile file = result.files.first;
@@ -1489,63 +1553,6 @@ class _HandlesPageState extends State<HandlesPage> {
                                                               shape: CircleBorder(),
                                                               padding: EdgeInsets.all(20),
                                                               primary: Palette.primary, // <-- Button color
-                                                              onPrimary: Palette.primary, // <-- Splash color
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: MQuery.height(0.025, context)),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Container(
-                                                          height: MQuery.height(0.1, context),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Get.back();
-                                                              Get.to(() => MeetingCreator(
-                                                                handlesID: handles.id
-                                                              ), transition: Transition.cupertino);
-                                                            },
-                                                            child: Constants.mediaAvatar[keys[3]],
-                                                            style: ElevatedButton.styleFrom(
-                                                              shape: CircleBorder(),
-                                                              padding: EdgeInsets.all(20),
-                                                              primary: Palette.primary, // <-- Button color
-                                                              onPrimary: Palette.primary, // <-- Splash color
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          height: MQuery.height(0.1, context),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Get.back();
-                                                              Get.to(() => ProjectCreator(
-                                                                handlesID: handles.id
-                                                              ), transition: Transition.cupertino);
-                                                            },
-                                                            child: Constants.mediaAvatar[keys[4]],
-                                                            style: ElevatedButton.styleFrom(
-                                                              shape: CircleBorder(),
-                                                              padding: EdgeInsets.all(20),
-                                                              primary: Palette.primary, // <-- Button color
-                                                              onPrimary: Palette.primary, // <-- Splash color
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          height: MQuery.height(0.1, context),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                            },
-                                                            child: Constants.mediaAvatar[keys[4]],
-                                                            style: ElevatedButton.styleFrom(
-                                                              elevation: 0,
-                                                              shape: CircleBorder(),
-                                                              padding: EdgeInsets.all(20),
-                                                              primary: Colors.transparent, // <-- Button color
                                                               onPrimary: Palette.primary, // <-- Splash color
                                                             ),
                                                           ),

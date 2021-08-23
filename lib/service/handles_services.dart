@@ -7,6 +7,58 @@ class HandlesServices with ChangeNotifier{
   bool isLoading = false;
   HandlesServices({required this.auth, required this.firestore, required this.storage});
 
+  Future<void> changeHandlesName(String name, String handlesID) async {
+    return firestore
+    .collection("handles")
+    .doc(handlesID)
+    .update({
+      "name": name
+    }).then((value){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} changed this group chat's name into $name",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
+    });
+  }
+
+  Future<void> updateHandlesPaymentInstructions(String value, String handlesID){
+    return firestore
+    .collection("handles")
+    .doc(handlesID)
+    .update({
+      "paymentInstructions": value
+    }).then((value){
+      firestore
+      .collection('handles')
+      .doc(handlesID)
+      .collection('messages')
+      .doc()
+      .set({
+        "sender": auth.currentUser!.uid,
+        "content": "${auth.currentUser!.displayName} updated this group chat's payment instructions",
+        "mediaURL": null,
+        "type": "status",
+        "timestamp": DateTime.now().toString(),
+        "isPinned": false,
+        "deletedBy": [],
+        "readBy": [],
+        "replyTo": ""
+      });
+    });
+  }
+
   Future<UserModel?> addMember(String phoneNumber) async {
     UserModel? userModelOutput;
     try{
@@ -294,6 +346,7 @@ class HandlesServices with ChangeNotifier{
       id: snapshot.id,
       description: snapshot['description'],
       members: (snapshot['members'] as Map<dynamic, dynamic>).cast<String, String>(),
+      paymentInstructions: snapshot['paymentInstructions'],
       name: snapshot['name'],
       cover: snapshot['cover'],
       pinnedBy: (snapshot['pinnedBy'] as List<dynamic>).cast<String>(),

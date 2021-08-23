@@ -2,10 +2,11 @@ part of "../pages.dart";
 
 class HandlesMediasPage extends StatefulWidget {
   final String handlesID;
+  final String handlesPaymentInstructions;
   final String currentUserID;
   const HandlesMediasPage(
-      {Key? key, required this.handlesID, required this.currentUserID})
-      : super(key: key);
+    {Key? key, required this.handlesID, required this.currentUserID, required this.handlesPaymentInstructions}
+  ) : super(key: key);
 
   @override
   _HandlesMediasPageState createState() => _HandlesMediasPageState();
@@ -1060,6 +1061,7 @@ class _HandlesMediasPageState extends State<HandlesMediasPage>
                                                       .when(
                                                           data: (projectModel) {
                                                     return ProjectChat(
+                                                        handlesPaymentInstructions: handles.paymentInstructions ?? "",
                                                         handlesID: handles.id,
                                                         index: index,
                                                         userID: widget

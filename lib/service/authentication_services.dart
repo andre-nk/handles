@@ -78,8 +78,21 @@ class AuthenticationService with ChangeNotifier{
 
   Future<void> createUserRecord(UserModel user) async{
 
-    await auth.currentUser!.updateDisplayName(user.name);
-    await auth.currentUser!.updatePhotoURL(user.profilePicture);
+    isError = false;
+    notifyListeners();
+
+    try{
+      await auth.currentUser!.updateDisplayName(user.name);
+      await auth.currentUser!.updatePhotoURL(user.profilePicture);
+    } catch (e) {
+      Get.dialog(
+        ShowDialogToDismiss(
+          title: "Error!",
+          content: e.toString(),
+          buttonText: "OK",
+        )
+      );
+    }
 
     try{
       await firestore
@@ -118,8 +131,14 @@ class AuthenticationService with ChangeNotifier{
       );
     } catch (e){
       isError = true;
+      Get.dialog(
+        ShowDialogToDismiss(
+          title: "Error!",
+          content: e.toString(),
+          buttonText: "OK",
+        )
+      );
       notifyListeners();
-      print(e);
     }
 
     if(!isError){

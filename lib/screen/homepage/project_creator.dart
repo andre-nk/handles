@@ -202,7 +202,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                           color: Palette.formColor,
                         ),
                         child: Center(
-                          child: TextFormField(
+                          child: TextField(
                             keyboardType: TextInputType.name,
                             controller: titleController,
                             cursorColor: Palette.primary,
@@ -246,7 +246,7 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                           borderRadius: BorderRadius.circular(10.0),
                           color: Palette.formColor,
                         ),
-                        child: TextFormField(
+                        child: TextField(
                           keyboardType: TextInputType.name,
                           controller: descriptionController,
                           cursorColor: Palette.primary,
@@ -356,11 +356,13 @@ class _ProjectCreatorState extends State<ProjectCreator> {
                                                 ),
                                               ),
                                               Text(
-                                                NumberFormat.simpleCurrency(
-                                                  locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
-                                                  ? 'en_$localeModel!["code"]'
-                                                  : localeModel!['code']
-                                                ).format(target.fee),
+                                                target.fee == 0
+                                                ? ""
+                                                : NumberFormat.simpleCurrency(
+                                                    locale: localeModel!['code'] == "US" || localeModel!['code'] == "GB" || localeModel!['code'] == "AU"
+                                                    ? 'en_$localeModel!["code"]'
+                                                    : localeModel!['code']
+                                                  ).format(target.fee),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: Palette.primaryText,
@@ -613,7 +615,7 @@ class _MilestoneCreatorDialogState extends State<MilestoneCreatorDialog> {
                   color: Palette.formColor,
                 ),
                 child: Center(
-                  child: TextFormField(
+                  child: TextField(
                     keyboardType: TextInputType.name,
                     controller: titleController,
                     cursorColor: Palette.primary,
@@ -657,7 +659,7 @@ class _MilestoneCreatorDialogState extends State<MilestoneCreatorDialog> {
                   borderRadius: BorderRadius.circular(10.0),
                   color: Palette.formColor,
                 ),
-                child: TextFormField(
+                child: TextField(
                   keyboardType: TextInputType.name,
                   controller: descriptionController,
                   cursorColor: Palette.primary,
@@ -751,7 +753,7 @@ class _MilestoneCreatorDialogState extends State<MilestoneCreatorDialog> {
                         color: Palette.formColor,
                       ),
                       child: Center(
-                        child: TextFormField(
+                        child: TextField(
                           keyboardType: TextInputType.number,
                           controller: feeController,
                           cursorColor: Palette.primary,

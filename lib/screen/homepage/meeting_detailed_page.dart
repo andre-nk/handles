@@ -25,6 +25,7 @@ class _MeetingDetailedPageState extends State<MeetingDetailedPage> {
 
   bool isError = false;
   TextEditingController _meetingURLController = TextEditingController();
+  TextEditingController _meetingLocationController = TextEditingController();
   ItemAction itemAction = ItemAction.normal;
 
   Future<Favicon.Icon?> getFavicon(String url) async{
@@ -39,6 +40,7 @@ class _MeetingDetailedPageState extends State<MeetingDetailedPage> {
   Widget build(BuildContext context) {
 
     _meetingURLController.text = widget.meetingModel.meetingURL;
+    _meetingLocationController.text = widget.meetingModel.meetingLocation;
 
     return Consumer(
       builder: (ctx, watch,child) {
@@ -201,7 +203,7 @@ class _MeetingDetailedPageState extends State<MeetingDetailedPage> {
                                     color: Palette.formColor,
                                     borderRadius: BorderRadius.all(Radius.circular(5))
                                   ),
-                                  child: TextFormField(
+                                  child: TextField(
                                     readOnly: true,
                                     keyboardType: TextInputType.url,
                                     controller: _meetingURLController,
@@ -241,6 +243,48 @@ class _MeetingDetailedPageState extends State<MeetingDetailedPage> {
                                         color: isError ? Palette.warning : Colors.black.withOpacity(0.4)
                                       ),
                                       hintText: "Fill the meeting's join / invitation link",
+                                      contentPadding: EdgeInsets.all(15),
+                                      border: InputBorder.none
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: MQuery.height(0.015, context)),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Palette.formColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(5))
+                                  ),
+                                  child: TextField(
+                                    readOnly: true,
+                                    keyboardType: TextInputType.url,
+                                    controller: _meetingLocationController,
+                                    cursorColor: Palette.primary,
+                                    minLines: 2,
+                                    maxLines: 4,
+                                    style: TextStyle(
+                                      fontSize: 16
+                                    ),
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      suffixIconConstraints: BoxConstraints(
+                                        minWidth: 2,
+                                        minHeight: 2,
+                                      ),
+                                      suffixIcon: Padding(
+                                        padding: EdgeInsets.only(right: 14.0),
+                                        child: AdaptiveIcon(
+                                          android: Icons.map_outlined,
+                                          iOS: CupertinoIcons.map_fill,
+                                          color: Palette.primary,
+                                          size: 20
+                                        ),
+                                      ),
+                                      fillColor: Palette.primary,
+                                      hintStyle: TextStyle(
+                                        fontSize: 16,
+                                        color: isError ? Palette.warning : Colors.black.withOpacity(0.4)
+                                      ),
+                                      hintText: "Meeting's location",
                                       contentPadding: EdgeInsets.all(15),
                                       border: InputBorder.none
                                     ),
@@ -317,7 +361,7 @@ class _MeetingDetailedPageState extends State<MeetingDetailedPage> {
                           MQuery.height(0.0375, context),
                           MQuery.height(0, context),
                           MQuery.height(0.0375, context),
-                          MQuery.height(0.075, context),
+                          MQuery.height(0.05, context),
                         ),
                         child: widget.meetingModel.meetingStartTime.isAfter(DateTime.now())
                         ? Button(

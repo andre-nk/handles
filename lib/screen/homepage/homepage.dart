@@ -64,7 +64,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
         final _handlesProvider = watch(handlesProvider);
         final _chatProvider = watch(chatProvider);
         final _userProvider = watch(userProvider);
-
+        
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           home: Scaffold(
@@ -527,7 +527,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 )
             ),
             body: _currentUserProvider.when(
-              data: (user){
+              data: (user){                
                 return FutureBuilder<PurchaserInfo>(
                   future: _purchasesProvider.getPurchaserInfo(),
                   builder: (context, snapshot) {
@@ -1055,7 +1055,12 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                         ? EmptyHandles(isHandlesPage: false)
                         : watch(filteredCallProvider).when(
                             data: (callLogs){
-                              return ListView.builder(
+
+                              callLogs = callLogs.reversed.toList();
+
+                              return callLogs.isEmpty
+                              ? EmptyHandles(isHandlesPage: false)
+                              : ListView.builder(
                                 itemCount: callLogs.length,
                                 itemBuilder: (context, index){
                                   return Column(
@@ -1146,7 +1151,12 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                                                 ),
                                               )
                                             )
-                                          : SizedBox();
+                                          : Text(
+                                            "a",
+                                            style: TextStyle(
+                                              color: Colors.black
+                                            )
+                                          );
                                         }
                                       ),
                                       Divider(),
@@ -1156,11 +1166,12 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                               );
                             },
                             loading: (){
-                              return SizedBox();
+                              print("true");
+                              return EmptyHandles(isHandlesPage: false);
                             },
                             error: (error, object){
                               print(error);
-                              return SizedBox();
+                              return CircularProgressIndicator(color: Palette.warning);
                             }
                         )
                       ],

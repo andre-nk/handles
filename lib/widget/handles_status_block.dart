@@ -48,8 +48,8 @@ class HandlesStatusBlock extends StatelessWidget {
           },
           child: Container(
             margin: EdgeInsets.only(
-              bottom: MQuery.height(isDateBlock ? 0 : 0.02, context),
-              top: MQuery.height(0.02, context),
+              bottom: MQuery.height(0.015, context),
+              top: MQuery.height(0.01, context),
               left: MQuery.width(0.08, context),
               right: MQuery.width(0.08, context)
             ),

@@ -8,6 +8,8 @@ class HandlesCreatorPage extends StatefulWidget {
 }
 
 class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   FormError errorLocation = FormError.none;
   Set<UserModel> membersList = Set();
   Set<String> rolesList = Set();
@@ -15,9 +17,6 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    TextEditingController titleController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
 
     void addMember(UserModel invitee, String role) {
       setState(() {
@@ -189,7 +188,6 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                       ),
                       child: Center(
                         child: TextFormField(
-                          keyboardType: TextInputType.name,
                           controller: titleController,
                           cursorColor: Palette.primary,
                           style: TextStyle(fontSize: 16),
@@ -232,8 +230,7 @@ class _HandlesCreatorPageState extends State<HandlesCreatorPage> {
                         borderRadius: BorderRadius.circular(10.0),
                         color: Palette.formColor,
                       ),
-                      child: TextFormField(
-                        keyboardType: TextInputType.name,
+                      child: TextField(
                         controller: descriptionController,
                         cursorColor: Palette.primary,
                         minLines: 3,

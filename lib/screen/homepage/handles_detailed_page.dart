@@ -14,15 +14,9 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
 
   bool isReadOnly = true;
   bool isNotificationActive = true;
+  TextEditingController nameController = TextEditingController();
   TextEditingController paymentAddressController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-
-  @override
-  void initState() { 
-    super.initState();
-    paymentAddressController.text = "123456789123";
-    descriptionController.text = "";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +32,14 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
           data: (handles){
 
             descriptionController.text = handles.description;
+            paymentAddressController.text = handles.paymentInstructions ?? "";
+            nameController.text = handles.name;
 
             return Scaffold(
               body: CustomScrollView(
                 slivers: <Widget>[
                   SliverAppBar(
-              centerTitle: false,
+                    centerTitle: false,
                     expandedHeight: 250.0,
                     leadingWidth: MQuery.width(0.05, context),
                     leading: IconButton(
@@ -60,7 +56,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                       ? FadeInRight(
                           child: Center(
                             child: Text(
-                              "Editing Handle",
+                              "Editing Chat",
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 14,
@@ -201,15 +197,25 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                           child: FlexibleSpaceBar(
                             titlePadding: EdgeInsets.only(
                               left: top < 140 ? MQuery.width(0.06, context) : MQuery.width(0.02, context),
-                              bottom: top < 140 ? MQuery.width(0.0185, context) : MQuery.width(0.02, context),
+                              // bottom: top < 140 ? MQuery.width(0.0185, context) : MQuery.width(0.02, context),
                               right: MQuery.width(0.02, context),
                             ),
-                            title: Text(
-                              handles.name,
+                            title: TextFormField(
+                              readOnly: isReadOnly,
+                              keyboardType: TextInputType.name,
+                              controller: nameController,
+                              cursorColor: Palette.primary,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
-                              )
+                                fontWeight: FontWeight.w500
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none
+                              ),
+                              onFieldSubmitted: (value) {
+                                _handlesProvider.changeHandlesName(nameController.text, widget.handlesID);
+                              }
                             ),
                             background: Hero(
                               tag: "handles_picture",
@@ -240,7 +246,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextFormField(
+                        TextField(
                           readOnly: isReadOnly,
                           keyboardType: TextInputType.text,
                           controller: descriptionController,
@@ -254,7 +260,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                               fontSize: 14,
                               color: Colors.black.withOpacity(0.4)
                             ),
-                            hintText: "Enter Handle's description here...",
+                            hintText: "Enter Chat's description here...",
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 20,
                               horizontal: 15
@@ -314,6 +320,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                             }
                           ),
                           onTap: (){Get.to(() => HandlesMediasPage(
+                            handlesPaymentInstructions: handles.paymentInstructions ?? "",
                             handlesID: widget.handlesID,
                             currentUserID: widget.currentUserID,
                           ), transition: Transition.cupertino);}
@@ -345,6 +352,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                         Divider(height: 1,),
                         ListTile(
                           onTap: (){
+                            print(handles.members[widget.currentUserID] == "Admin");
                             Get.dialog(
                               Dialog(
                                 child: ConstrainedBox(
@@ -360,12 +368,22 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "Handles DevTeam Payment Details",
+                                            "Handles DevTeam Payment Instructions",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               color: Palette.primaryText,
                                               fontWeight: FontWeight.w500
+                                            ),
+                                          ),
+                                          SizedBox(height: MQuery.height(0.01, context)),
+                                          Text(
+                                           "Add your bank account and payment instructions so your clients know how to pay you",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Palette.primaryText,
+                                              fontWeight: FontWeight.normal
                                             ),
                                           ),
                                           SizedBox(height: MQuery.height(0.02, context)),
@@ -375,7 +393,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                               borderRadius: BorderRadius.all(Radius.circular(5))
                                             ),
                                             child: TextFormField(
-                                              readOnly: false,
+                                              readOnly: !(handles.members[widget.currentUserID] == "Admin"),
                                               maxLines: 6,
                                               minLines: 4,
                                               keyboardType: TextInputType.text,
@@ -391,10 +409,16 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                                   fontSize: 16,
                                                   color: Colors.black.withOpacity(0.4)
                                                 ),
-                                                hintText: "Payment details hasn't provided yet",
+                                                hintText: "Payment instructions isn't provided yet",
                                                 contentPadding: EdgeInsets.all(15),
                                                 border: InputBorder.none
                                               ),
+                                              onFieldSubmitted: (value){
+                                                _handlesProvider.updateHandlesPaymentInstructions(
+                                                  paymentAddressController.text,
+                                                  widget.handlesID
+                                                );
+                                              },
                                             ),
                                           ),
                                         ]
@@ -409,7 +433,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                             vertical: BorderSide(color: Colors.grey.withOpacity(0.5))
                           ),
                           title: Text(
-                            "Payment details",
+                            "Payment instructions",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
@@ -652,7 +676,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                           margin: EdgeInsets.all(MQuery.width(0.025, context)),
                           child: Button(
                             width: double.infinity,
-                            title: "Left ${handles.name}",
+                            title: "Leave ${handles.name}",
                             textColor: Palette.warning,
                             color: Colors.white,
                             borderColor: Palette.warning,
@@ -673,7 +697,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         "Action permitted",
                                       ),
                                       content: Text(
-                                        "You cannot leave this handle when you are an Admin and there are no other Admin collaborators. Please assign an Admin role to other collaborator before you leave."
+                                        "You cannot leave this chat when you are an Admin and there are no other Admin collaborators. Please assign an Admin role to other collaborator before you leave."
                                       )
                                     )
                                   : CupertinoAlertDialog(
@@ -681,7 +705,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         "Action permitted",
                                       ),
                                       content: Text(
-                                        "You cannot leave this handle when you are an Admin and there are no other Admin collaborators. Please assign an Admin role to other collaborator before you leave."
+                                        "You cannot leave this chat when you are an Admin and there are no other Admin collaborators. Please assign an Admin role to other collaborator before you leave."
                                       )
                                     )
                                 );
@@ -693,7 +717,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         "Are you sure you want to left ${handles.name}?",
                                       ),
                                       content: Text(
-                                        "This action will make you leave ${handles.name} and you need an invitation to rejoin this handle."
+                                        "This action will make you leave ${handles.name} and you need an invitation to rejoin this chat."
                                       ),
                                       actions: [
                                         TextButton(
@@ -720,8 +744,6 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                             handles.members.remove(widget.currentUserID);
                                             Map<String, String> newHandlesMembers = handles.members;
 
-                                           
-
                                             _userProvider.getUserByID(widget.currentUserID).then((value){
                                               // ignore: unnecessary_null_comparison
                                               if(value != null){
@@ -742,7 +764,7 @@ class _HandlesDetailedPageState extends State<HandlesDetailedPage> {
                                         "Are you sure you want to left ${handles.name}?",
                                       ),
                                       content: Text(
-                                        "This action will make you leave ${handles.name} and you need an invitation to rejoin this handle."
+                                        "This action will make you leave ${handles.name} and you need an invitation to rejoin this chat."
                                       ),
                                       actions: [
                                         TextButton(

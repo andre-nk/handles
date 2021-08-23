@@ -19,6 +19,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController urlController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   DateTime baseDate = DateTime.now();
   DateTime endTime = DateTime.now().add(Duration(hours: 1));
   Set<String> attendeesList = Set(); //INFO: ATTENDEES UID HERE... (INT FOR SAMPLE)
@@ -31,6 +32,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
       titleController.text = widget.meetingModel!.meetingName;
       descriptionController.text = widget.meetingModel!.description;
       urlController.text = widget.meetingModel!.meetingURL;
+      locationController.text = widget.meetingModel!.meetingLocation;
       baseDate = widget.meetingModel!.meetingStartTime;
       endTime = widget.meetingModel!.meetingEndTime;
       attendeesList = widget.meetingModel!.attendees.toSet();
@@ -39,8 +41,6 @@ class _MeetingCreatorState extends State<MeetingCreator> {
 
   @override
   Widget build(BuildContext context) {
-
-    print(widget.meetingModel);
 
     Future<void> _selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
@@ -217,7 +217,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                     vertical: MQuery.height(0.03, context),
                     horizontal: MQuery.width(0.025, context)
                   ),
-                  height: MQuery.height(1.175, context),
+                  height: MQuery.height(1.4, context),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -243,7 +243,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                           color: Palette.formColor,
                         ),
                         child: Center(
-                          child: TextFormField(
+                          child: TextField(
                             keyboardType: TextInputType.name,
                             controller: titleController,
                             cursorColor: Palette.primary,
@@ -287,7 +287,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                           borderRadius: BorderRadius.circular(10.0),
                           color: Palette.formColor,
                         ),
-                        child: TextFormField(
+                        child: TextField(
                           keyboardType: TextInputType.name,
                           controller: descriptionController,
                           cursorColor: Palette.primary,
@@ -330,7 +330,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                           color: Palette.formColor,
                         ),
                         child: Center(
-                          child: TextFormField(
+                          child: TextField(
                             keyboardType: TextInputType.url,
                             controller: urlController,
                             cursorColor: Palette.primary,
@@ -344,6 +344,50 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                               ),
                               hintText: "Enter the meeting's join / invitation link",
                               contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              border: InputBorder.none
+                            ),
+                          ),
+                        )
+                      ),
+                      SizedBox(height: MQuery.height(0.02, context)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8.0
+                        ),
+                        child: Font.out(
+                          "Meeting's location",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400
+                        ),
+                      ),
+                      SizedBox(height: MQuery.height(0.01, context)),
+                      Container(
+                        height: MQuery.height(0.12, context),
+                        width: MQuery.width(0.9, context),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: errorLocation == FormError.url ? Palette.warning : Colors.transparent
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Palette.formColor,
+                        ),
+                        child: Center(
+                          child: TextField(
+                            minLines: 1,
+                            maxLines: 2,
+                            keyboardType: TextInputType.text,
+                            controller: locationController,
+                            cursorColor: Palette.primary,
+                            style: TextStyle(
+                              fontSize: 16
+                            ),
+                            decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                fontSize: 16,
+                                color: errorLocation == FormError.url ? Palette.warning : Colors.black.withOpacity(0.4)
+                              ),
+                              hintText: "Enter the meeting's location",
+                              contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                               border: InputBorder.none
                             ),
                           ),
@@ -579,6 +623,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                                   meetingURL: urlController.text,
                                   attendees: attendeesList.toList().cast<String>(),
                                   meetingName: titleController.text,
+                                  meetingLocation: locationController.text,
                                   meetingEndTime: endTime,
                                   description: descriptionController.text,
                                   meetingStartTime: baseDate,
@@ -609,6 +654,7 @@ class _MeetingCreatorState extends State<MeetingCreator> {
                                   meetingURL: urlController.text,
                                   attendees: attendeesList.toList().cast<String>(),
                                   meetingName: titleController.text,
+                                  meetingLocation: locationController.text,
                                   meetingEndTime: endTime,
                                   description: descriptionController.text,
                                   meetingStartTime: baseDate,

@@ -153,7 +153,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                     ),
                                     SizedBox(height: MQuery.height(0.02, context)),
                                     Text(
-                                      "Create only one Handle group chat for your team or join it via invitation from your colleague and display your personal info on your profile",
+                                      "Create only one Chat group chat for your team or join it via invitation from your colleague and display your personal info on your profile",
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         height: 1.5,
