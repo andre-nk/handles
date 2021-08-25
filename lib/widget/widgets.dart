@@ -15,6 +15,7 @@ import 'package:handles/config/config.dart';
 import 'package:handles/model/models.dart';
 import 'package:handles/provider/providers.dart';
 import 'package:handles/screen/pages.dart';
+import 'package:handles/widget/native_dialog.dart';
 import 'dart:io' show Directory, File, Platform;
 import 'dart:math' as math;
 import 'package:intl/intl.dart';

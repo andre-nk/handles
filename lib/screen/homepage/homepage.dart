@@ -255,7 +255,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               centerTitle: false,
               elevation: isSearchActive ? 0 : 2.5,
               backgroundColor: Palette.primary,
-              toolbarHeight: isSearchActive ? MQuery.height(0.07, context) : MQuery.height(0.125, context),
+              toolbarHeight: isSearchActive ? MQuery.height(0.07, context) : MQuery.height(0.07, context),
               leadingWidth: isHandlesSelected || isSearchActive
                 ? MQuery.width(0.065, context)
                 : MQuery.width(0, context),

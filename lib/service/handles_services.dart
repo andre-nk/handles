@@ -116,7 +116,8 @@ class HandlesServices with ChangeNotifier{
         "cover": handlesModel.cover,
         "members": handlesModel.members,
         "pinnedBy": handlesModel.pinnedBy,
-        "archivedBy": handlesModel.archivedBy
+        "archivedBy": handlesModel.archivedBy,
+        "paymentInstructions": ""
       }
     ).then((value){
 

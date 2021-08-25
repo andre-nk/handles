@@ -240,7 +240,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                           iOS: CupertinoIcons.person_fill,
                                           color: Palette.primary),
                                       title: TextFormField(
-                                        autofocus: true,
                                         readOnly: isReadOnly,
                                         keyboardType: TextInputType.name,
                                         controller: nameController,

@@ -60,7 +60,7 @@ dependencies:
   open_file: ^3.2.1
   path: ^1.8.0
   path_provider: ^2.0.2
-  permission_handler: ^8.1.2
+  permission_handler: ^8.1.4+2
   pinch_zoom: ^0.1.0
   pinput: ^1.2.0
   purchases_flutter: ^3.4.1

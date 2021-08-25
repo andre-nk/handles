@@ -90,7 +90,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Container(
-                height: MQuery.height(1, context),
+                height: MQuery.height(1.1, context),
                 child: Column(
                   children: [
                     Expanded(
@@ -435,7 +435,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                   );
                                 },
                                 textColor: Colors.white,
-                                title: "MARK AS WORKING",
+                                title: "Mark as Working",
                               )
                             : widget.projectModel.status == ProjectStatus.in_progress
                             ? Button(
@@ -450,7 +450,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                   );
                                 },
                                 textColor: Colors.white,
-                                title: "MARK AS COMPLETED",
+                                title: "Mark as Completed",
                               )
                             : SizedBox(),
                             SizedBox(height: MQuery.height(0.01, context)),
@@ -467,7 +467,7 @@ class _ProjectDetailedPageState extends State<ProjectDetailedPage> {
                                   );
                                 },
                                 textColor: Colors.white,
-                                title: "MARK AS PAID",
+                                title: "Mark as Paid",
                               )
                             : Button(
                                 width: double.infinity - MQuery.width(0.075, context),

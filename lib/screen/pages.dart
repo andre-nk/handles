@@ -25,6 +25,7 @@ import 'package:handles/config/config.dart';
 import 'package:handles/model/models.dart';
 import 'package:handles/provider/providers.dart';
 import 'package:handles/service/services.dart';
+import 'package:handles/widget/native_dialog.dart';
 import 'package:handles/widget/widgets.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:image_picker/image_picker.dart';

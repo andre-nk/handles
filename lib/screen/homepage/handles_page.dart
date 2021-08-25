@@ -1436,117 +1436,124 @@ class _HandlesPageState extends State<HandlesPage> {
                                                           height: MQuery.height(0.1, context),
                                                           child: ElevatedButton(
                                                             onPressed: () async {
-                                                              Get.back();
-                                                              FilePickerResult? result = await FilePicker.platform.pickFiles();
-                                                              if(result != null) {
-                                                                PlatformFile file = result.files.first;
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (context){
-                                                                    return Platform.isAndroid
-                                                                    ? AlertDialog(
-                                                                        content: Text(
-                                                                          'Send file: "${file.name}" to ${handles.name}?'
-                                                                        ),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            child: Text("CANCEL"),
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(
-                                                                                color: Palette.warning,
-                                                                                fontWeight: FontWeight.w500
-                                                                              )
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              Get.back();
-                                                                            },
+                                                              await FilePicker.platform.pickFiles().then((result){
+                                                                if(result != null) {
+                                                                  PlatformFile file = result.files.first;
+                                                                  Get.back();
+                                                                  showDialog(
+                                                                    context: context,
+                                                                    builder: (context){
+                                                                      return Platform.isAndroid
+                                                                      ? AlertDialog(
+                                                                          content: Text(
+                                                                            'Send file: "${file.name}" to ${handles.name}?'
                                                                           ),
-                                                                          TextButton(
-                                                                            child: Text("SEND"),
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(
-                                                                                color: Palette.primary,
-                                                                                fontWeight: FontWeight.w500
-                                                                              )
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              child: Text("CANCEL"),
+                                                                              style: TextButton.styleFrom(
+                                                                                textStyle: TextStyle(
+                                                                                  color: Palette.warning,
+                                                                                  fontWeight: FontWeight.w500
+                                                                                )
+                                                                              ),
+                                                                              onPressed: (){
+                                                                                Get.back();
+                                                                              },
                                                                             ),
-                                                                            onPressed: (){
-                                                                              Get.back();
-                                                                              _chatProvider.uploadDocument(file.path!, handles.name).then((mediaURL){
-        
-                                                                                _chatProvider.sendDocumentChat(
-                                                                                  widget.handlesID,
-                                                                                  ChatModel(
-                                                                                    id: Uuid().v4(),
-                                                                                    type: ChatType.docs,
-                                                                                    content: chatController.text,
-                                                                                    replyTo: isReplying != null ? isReplying!.id : "",
-                                                                                    mediaURL: mediaURL,
-                                                                                    readBy: [],
-                                                                                    deletedBy: [],
-                                                                                    timestamp: DateTime.now(),
-                                                                                    sender: "",
-                                                                                    isPinned: false
-                                                                                  )
-                                                                                );
-                                                                              });
-                                                                            },
-                                                                          )
-                                                                        ],
-                                                                      )
-                                                                    : CupertinoAlertDialog(
-                                                                        content: Text(
-                                                                          'Send file: "${file.name}" to  ${handles.name}?'
-                                                                        ),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            child: Text("CANCEL"),
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(
-                                                                                color: Palette.warning,
-                                                                                fontWeight: FontWeight.w500
-                                                                              )
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              Get.back();
-                                                                            },
+                                                                            TextButton(
+                                                                              child: Text("SEND"),
+                                                                              style: TextButton.styleFrom(
+                                                                                textStyle: TextStyle(
+                                                                                  color: Palette.primary,
+                                                                                  fontWeight: FontWeight.w500
+                                                                                )
+                                                                              ),
+                                                                              onPressed: (){
+                                                                                Get.back();
+                                                                                _chatProvider.uploadDocument(file.path!, handles.name).then((mediaURL){
+          
+                                                                                  _chatProvider.sendDocumentChat(
+                                                                                    widget.handlesID,
+                                                                                    ChatModel(
+                                                                                      id: Uuid().v4(),
+                                                                                      type: ChatType.docs,
+                                                                                      content: chatController.text,
+                                                                                      replyTo: isReplying != null ? isReplying!.id : "",
+                                                                                      mediaURL: mediaURL,
+                                                                                      readBy: [],
+                                                                                      deletedBy: [],
+                                                                                      timestamp: DateTime.now(),
+                                                                                      sender: "",
+                                                                                      isPinned: false
+                                                                                    )
+                                                                                  );
+                                                                                });
+                                                                              },
+                                                                            )
+                                                                          ],
+                                                                        )
+                                                                      : CupertinoAlertDialog(
+                                                                          content: Text(
+                                                                            'Send file: "${file.name}" to  ${handles.name}?'
                                                                           ),
-                                                                          TextButton(
-                                                                            child: Text("SEND"),
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(
-                                                                                color: Palette.primary,
-                                                                                fontWeight: FontWeight.w500
-                                                                              )
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              child: Text("CANCEL"),
+                                                                              style: TextButton.styleFrom(
+                                                                                textStyle: TextStyle(
+                                                                                  color: Palette.warning,
+                                                                                  fontWeight: FontWeight.w500
+                                                                                )
+                                                                              ),
+                                                                              onPressed: (){
+                                                                                Get.back();
+                                                                              },
                                                                             ),
-                                                                            onPressed: (){
-                                                                              Get.back();
-                                                                              _chatProvider.uploadDocument(file.path!, handles.name).then((mediaURL){
-        
-                                                                                _chatProvider.sendDocumentChat(
-                                                                                  widget.handlesID,
-                                                                                  ChatModel(
-                                                                                    id: Uuid().v4(),
-                                                                                    type: ChatType.docs,
-                                                                                    content: chatController.text,
-                                                                                    replyTo: isReplying != null ? isReplying!.id : "",
-                                                                                    mediaURL: mediaURL,
-                                                                                    readBy: [],
-                                                                                    deletedBy: [],
-                                                                                    timestamp: DateTime.now(),
-                                                                                    sender: "",
-                                                                                    isPinned: false
-                                                                                  )
-                                                                                );
-                                                                              });
-                                                                            },
-                                                                          )
-                                                                        ],
-                                                                      );
-                                                                  }
-                                                                );
-                                                              } else {
-                                                                // User canceled the picker
-                                                              }
+                                                                            TextButton(
+                                                                              child: Text("SEND"),
+                                                                              style: TextButton.styleFrom(
+                                                                                textStyle: TextStyle(
+                                                                                  color: Palette.primary,
+                                                                                  fontWeight: FontWeight.w500
+                                                                                )
+                                                                              ),
+                                                                              onPressed: (){
+                                                                                Get.back();
+                                                                                _chatProvider.uploadDocument(file.path!, handles.name).then((mediaURL){
+          
+                                                                                  _chatProvider.sendDocumentChat(
+                                                                                    widget.handlesID,
+                                                                                    ChatModel(
+                                                                                      id: Uuid().v4(),
+                                                                                      type: ChatType.docs,
+                                                                                      content: chatController.text,
+                                                                                      replyTo: isReplying != null ? isReplying!.id : "",
+                                                                                      mediaURL: mediaURL,
+                                                                                      readBy: [],
+                                                                                      deletedBy: [],
+                                                                                      timestamp: DateTime.now(),
+                                                                                      sender: "",
+                                                                                      isPinned: false
+                                                                                    )
+                                                                                  );
+                                                                                });
+                                                                              },
+                                                                            )
+                                                                          ],
+                                                                        );
+                                                                    }
+                                                                  );
+                                                                } else {
+                                                                  Get.dialog(
+                                                                    ShowDialogToDismiss(
+                                                                      title: "Error Saving File",
+                                                                      content: e.toString(),
+                                                                      buttonText: "OK",
+                                                                    )
+                                                                  );
+                                                                }
+                                                              });
                                                             },
                                                             child: Constants.mediaAvatar[keys[2]],
                                                             style: ElevatedButton.styleFrom(

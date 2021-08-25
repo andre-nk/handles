@@ -54,7 +54,7 @@ class _DocumentChatState extends State<DocumentChat> {
     Directory? directory;
     try {
       if (Platform.isAndroid) {
-        if (await _requestPermission(Permission.manageExternalStorage)) {
+        if (await _requestPermission(Permission.storage)) {
           directory = await getExternalStorageDirectory();
           String newPath = "";
           List<String> paths = directory!.path.split("/");
@@ -90,15 +90,20 @@ class _DocumentChatState extends State<DocumentChat> {
           onReceiveProgress: (value1, value2) {
             //notification
             print("$value1 - $value2");
-          });
-        if (Platform.isIOS) {
-          
-        }
+          }
+        );
+        setState((){});
         return true;
       }
       return false;
     } catch (e) {
-      print(e);
+      Get.dialog(
+        ShowDialogToDismiss(
+          title: "Error Saving File",
+          content: e.toString(),
+          buttonText: "OK",
+        )
+      );
       return false;
     }
   }
@@ -196,7 +201,13 @@ class _DocumentChatState extends State<DocumentChat> {
           try{
             OpenFile.open(newPath);
           } catch (e) {
-            print(e);
+            Get.dialog(
+              ShowDialogToDismiss(
+                title: "Error Opening File!",
+                content: e.toString(),
+                buttonText: "OK",
+              )
+            );
           }
         });
       });
@@ -278,8 +289,8 @@ class _DocumentChatState extends State<DocumentChat> {
                           color: Palette.primary,
                           borderRadius: BorderRadius.only(
                             topRight: widget.isRecurring
-                                ? Radius.circular(7)
-                                : Radius.circular(0),
+                            ? Radius.circular(7)
+                            : Radius.circular(0),
                             topLeft: Radius.circular(7),
                             bottomRight: Radius.circular(7),
                             bottomLeft: Radius.circular(7)
@@ -294,57 +305,56 @@ class _DocumentChatState extends State<DocumentChat> {
                                 Row(
                                   children: [
                                     FutureBuilder<String>(
-                                      future: getFileSize(widget.documentURL, 2),
+                                      future: getFileSize(widget.documentURL, 0),
                                       builder: (context, snapshot) {
                                         return snapshot.hasData
                                         ? Text(
                                             snapshot.data ?? "",
                                             textAlign: TextAlign.start,
                                             style: TextStyle(
-                                                color: Colors.white
-                                                    .withOpacity(0.5),
-                                                fontWeight:
-                                                    FontWeight.w400,
-                                                fontSize: 12),
+                                              color: Colors.white.withOpacity(0.5),
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12
+                                            ),
                                           )
                                         : SizedBox();
                                       }),
                                     SizedBox(width: 5),
                                     Container(
-                                        height: 3,
-                                        width: 3,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white
-                                                .withOpacity(0.5))),
+                                      height: 3,
+                                      width: 3,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withOpacity(0.5)
+                                      )
+                                    ),
                                     SizedBox(width: 5),
                                     FutureBuilder<String>(
-                                        future: getFileExtension(
-                                            widget.documentURL),
-                                        builder: (context, snapshot) {
-                                          return snapshot.hasData
-                                              ? Text(
-                                                  snapshot.data!
-                                                      .toUpperCase(),
-                                                  textAlign: TextAlign.start,
-                                                  style: TextStyle(
-                                                      color: Colors.white
-                                                          .withOpacity(0.5),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 12),
-                                                )
-                                              : SizedBox();
-                                        }),
+                                      future: getFileExtension(widget.documentURL),
+                                      builder: (context, snapshot) {
+                                        return snapshot.hasData
+                                        ? Text(
+                                            snapshot.data!.toUpperCase(),
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.5),
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12
+                                            ),
+                                          )
+                                        : SizedBox();
+                                      }
+                                    ),
                                   ],
                                 ),
                                 Text(
                                   DateFormat.jm().format(widget.timestamp),
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12),
+                                    color: Colors.white.withOpacity(0.5),
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12
+                                  ),
                                 ),
                               ],
                             ),
@@ -520,11 +530,12 @@ class _DocumentChatState extends State<DocumentChat> {
                       alignment: Alignment.center,
                       transform: Matrix4.rotationY(math.pi),
                       child: SvgPicture.asset("assets/tool_tip.svg",
-                          height: MQuery.height(0.02, context),
-                          width: MQuery.height(0.02, context),
-                          color: this.widget.isRecurring
-                              ? Colors.transparent
-                              : Palette.primary),
+                        height: MQuery.height(0.02, context),
+                        width: MQuery.height(0.02, context),
+                        color: this.widget.isRecurring
+                        ? Colors.transparent
+                        : Palette.primary
+                      ),
                     ),
                   ],
                 ),
@@ -532,22 +543,22 @@ class _DocumentChatState extends State<DocumentChat> {
             ),
           )
         : VisibilityDetector(
-          key: Key("${widget.index}"),
-          onVisibilityChanged: (VisibilityInfo info) {
-            if(widget.readBy.indexOf(widget.sender) >= 0){
-              print("already read");
-            } else {
-              List<String> newReadBy = widget.readBy;
-              newReadBy.add(widget.userID);
+            key: Key("${widget.index}"),
+            onVisibilityChanged: (VisibilityInfo info) {
+              if(widget.readBy.indexOf(widget.sender) >= 0){
+                print("already read");
+              } else {
+                List<String> newReadBy = widget.readBy;
+                newReadBy.add(widget.userID);
 
-              _chatProvider.readChat(
-                widget.handlesID,
-                widget.chatID,
-                newReadBy
-              );
-            }
-          },
-          child: FutureBuilder<UserModel>(
+                _chatProvider.readChat(
+                  widget.handlesID,
+                  widget.chatID,
+                  newReadBy
+                );
+              }
+            },
+            child: FutureBuilder<UserModel>(
               future: _userProvider.getUserByID(widget.sender),
               builder: (context, snapshot) {
 
@@ -558,10 +569,8 @@ class _DocumentChatState extends State<DocumentChat> {
 
                 return Container(
                     width: MQuery.width(1, context),
-                    margin:
-                        EdgeInsets.only(bottom: MQuery.width(0.01, context)),
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MQuery.width(0.01, context)),
+                    margin: EdgeInsets.only(bottom: MQuery.width(0.01, context)),
+                    padding: EdgeInsets.symmetric(horizontal: MQuery.width(0.01, context)),
                     color: widget.selectedChats != null
                     ? widget.selectedChats!.toList().indexOf(widget.index) >= 0
                       ? Palette.primary.withOpacity(0.25)
@@ -585,254 +594,225 @@ class _DocumentChatState extends State<DocumentChat> {
                               height: MQuery.height(0.02, context),
                               width: MQuery.height(0.02, context),
                               color: this.widget.isRecurring
-                                  ? Colors.transparent
-                                  : Colors.white),
+                              ? Colors.transparent
+                              : Colors.white),
                           ConstrainedBox(
                             constraints: BoxConstraints(
-                                maxWidth: MQuery.width(
-                                    this.widget.documentURL.length >= 30
-                                        ? 0.35
-                                        : this.widget.documentURL.length <= 12
-                                            ? 0.15
-                                            : this.widget.documentURL.length *
-                                                0.009,
-                                    context),
-                                minWidth: MQuery.width(0.14, context),
-                                minHeight: MQuery.height(0.045, context)),
+                              maxWidth: MQuery.width(
+                                this.widget.documentURL.length >= 30
+                                ? 0.35
+                                : this.widget.documentURL.length <= 12
+                                ? 0.15
+                                : this.widget.documentURL.length * 0.009, context),
+                              minWidth: MQuery.width(0.14, context),
+                              minHeight: MQuery.height(0.045, context)
+                            ),
                             child: Container(
-                              padding: EdgeInsets.all(
-                                  MQuery.height(0.01, context)),
+                              padding: EdgeInsets.all(MQuery.height(0.01, context)),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: widget.isRecurring
-                                          ? Radius.circular(7)
-                                          : Radius.circular(0),
-                                      topRight: Radius.circular(7),
-                                      bottomRight: Radius.circular(7),
-                                      bottomLeft: Radius.circular(7))),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: widget.isRecurring
+                                  ? Radius.circular(7)
+                                  : Radius.circular(0),
+                                  topRight: Radius.circular(7),
+                                  bottomRight: Radius.circular(7),
+                                  bottomLeft: Radius.circular(7)
+                                )
+                              ),
                               child: Stack(
                                 alignment: Alignment.bottomRight,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
                                         children: [
                                           FutureBuilder<String>(
-                                              future: getFileSize(
-                                                  widget.documentURL, 2),
-                                              builder: (context, snapshot) {
-                                                return snapshot.hasData
-                                                    ? Text(
-                                                        snapshot.data ?? "",
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .black
-                                                                .withOpacity(
-                                                                    0.5),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400,
-                                                            fontSize: 12),
-                                                      )
-                                                    : SizedBox();
-                                              }),
+                                            future: getFileSize(widget.documentURL, 0),
+                                            builder: (context, snapshot) {
+                                              return snapshot.hasData
+                                              ? Text(
+                                                  snapshot.data ?? "",
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(
+                                                    color: Colors.black.withOpacity(0.5),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 12
+                                                  ),
+                                                )
+                                              : SizedBox();
+                                            }
+                                          ),
                                           SizedBox(width: 5),
                                           Container(
-                                              height: 3,
-                                              width: 3,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.black
-                                                      .withOpacity(0.5))),
+                                            height: 3,
+                                            width: 3,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black.withOpacity(0.5)
+                                            )
+                                          ),
                                           SizedBox(width: 5),
                                           FutureBuilder<String>(
-                                              future: getFileExtension(widget.documentURL),
-                                              builder: (context, snapshot) {
-                                                return snapshot.hasData
-                                                    ? Text(
-                                                        snapshot.data!.toUpperCase(),
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .black
-                                                                .withOpacity(
-                                                                    0.5),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400,
-                                                            fontSize: 12),
-                                                      )
-                                                    : SizedBox();
-                                              }),
+                                            future: getFileExtension(widget.documentURL),
+                                            builder: (context, snapshot) {
+                                              return snapshot.hasData
+                                              ? Text(
+                                                  snapshot.data!.toUpperCase(),
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(
+                                                    color: Colors.black.withOpacity(0.5),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 12
+                                                  ),
+                                                )
+                                              : SizedBox();
+                                            }
+                                          ),
                                         ],
                                       ),
                                       Text(
-                                        DateFormat.jm()
-                                            .format(widget.timestamp),
+                                        DateFormat.jm().format(widget.timestamp),
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
-                                            color:
-                                                Colors.black.withOpacity(0.5),
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12),
+                                          color: Colors.black.withOpacity(0.5),
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12
+                                        ),
                                       ),
                                     ],
                                   ),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          widget.isRecurring &&
-                                                  widget.isPinned == false
+                                          widget.isRecurring && widget.isPinned == false
                                               ? SizedBox()
                                               : RichText(
                                                   text: TextSpan(
                                                     text: snapshot.hasData ? "${snapshot.data!.name} " : "",
                                                     style: TextStyle(
-                                                        color:
-                                                            Palette.primary,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 15),
+                                                      color: Palette.primary,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 15
+                                                    ),
                                                     children: [
                                                       TextSpan(
-                                                          text: "(${this.widget.senderRole})",
-                                                          style: TextStyle(
-                                                              color: Palette
-                                                                  .primary,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 15)),
+                                                        text: "(${this.widget.senderRole})",
+                                                        style: TextStyle(
+                                                          color: Palette.primary,
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 15
+                                                        )
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
                                           widget.isPinned
-                                              ? AdaptiveIcon(
-                                                  android: Icons.push_pin,
-                                                  iOS:
-                                                      CupertinoIcons.pin_fill,
-                                                  size: 12)
-                                              : SizedBox(),
+                                          ? AdaptiveIcon(
+                                              android: Icons.push_pin,
+                                              iOS: CupertinoIcons.pin_fill,
+                                              size: 12)
+                                          : SizedBox(),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height:
-                                              MQuery.height(0.01, context)),
+                                      SizedBox(height: MQuery.height(0.01, context)),
                                       widget.replyTo != null
                                       ? GestureDetector(
-                                        onTap: (){
-                                        
+                                        onTap: (){                              
                                           widget.scrollToTarget == null
                                           ? print("")
                                           : widget.scrollToTarget!(widget.scrollLocation ?? 0);
-                                          
                                         },
                                         child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxHeight: MQuery.height(0.15, context),
-                                              minWidth: double.infinity,
-                                            ),
-                                            child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                vertical: MQuery.height(0.005, context),
-                                                horizontal: MQuery.height(0.001, context)
-                                              ),
-                                              padding: EdgeInsets.all(MQuery.height(0.01, context)),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(7)),
-                                                color: Colors.grey[200]
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  FutureBuilder<UserModel>(
-                                                    future: _userProvider.getUserByID(widget.replyTo!.sender),
-                                                    builder: (context, snapshot) {
-                                                      return snapshot.hasData
-                                                      ? Text(
-                                                          snapshot.data!.name, 
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 13,
-                                                          )
-                                                        )
-                                                      : SizedBox();
-                                                    }
-                                                  ),
-                                                  SizedBox(height: MQuery.height(0.005, context)),
-                                                  Text(
-                                                    widget.replyTo!.type == ChatType.image
-                                                    ? "[Image] ${
-                                                          widget.replyTo!.content!.length >= 35
-                                                          ? widget.replyTo!.content!.substring(0, 32) + "..."
-                                                          : widget.replyTo!.content!
-                                                        }"
-                                                    : widget.replyTo!.type == ChatType.video
-                                                    ? "[Video] ${
-                                                          widget.replyTo!.content!.length >= 35
-                                                          ? widget.replyTo!.content!.substring(0, 32) + "..."
-                                                          : widget.replyTo!.content!
-                                                        }"
-                                                    : widget.replyTo!.type == ChatType.docs
-                                                    ? "[Docs] ${
-                                                          widget.replyTo!.content!.length >= 35
-                                                          ? widget.replyTo!.content!.substring(0, 32) + "..."
-                                                          : widget.replyTo!.content!
-                                                        }"
-                                                    : widget.replyTo!.content!.length >= 35
-                                                      ? widget.replyTo!.content!.substring(0, 32) + "..."
-                                                      : widget.replyTo!.content!, 
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      height: 1.25
-                                                    )
-                                                  )
-                                                ]
-                                              )
-                                            )
+                                          constraints: BoxConstraints(
+                                            maxHeight: MQuery.height(0.15, context),
+                                            minWidth: double.infinity,
                                           ),
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                              vertical: MQuery.height(0.005, context),
+                                              horizontal: MQuery.height(0.001, context)
+                                            ),
+                                            padding: EdgeInsets.all(MQuery.height(0.01, context)),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(7)),
+                                              color: Colors.grey[200]
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                FutureBuilder<UserModel>(
+                                                  future: _userProvider.getUserByID(widget.replyTo!.sender),
+                                                  builder: (context, snapshot) {
+                                                    return snapshot.hasData
+                                                    ? Text(
+                                                        snapshot.data!.name, 
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 13,
+                                                        )
+                                                      )
+                                                    : SizedBox();
+                                                  }
+                                                ),
+                                                SizedBox(height: MQuery.height(0.005, context)),
+                                                Text(
+                                                  widget.replyTo!.type == ChatType.image
+                                                  ? "[Image] ${
+                                                      widget.replyTo!.content!.length >= 35
+                                                      ? widget.replyTo!.content!.substring(0, 32) + "..."
+                                                      : widget.replyTo!.content!
+                                                    }"
+                                                  : widget.replyTo!.type == ChatType.video
+                                                  ? "[Video] ${
+                                                      widget.replyTo!.content!.length >= 35
+                                                      ? widget.replyTo!.content!.substring(0, 32) + "..."
+                                                      : widget.replyTo!.content!
+                                                    }"
+                                                  : widget.replyTo!.type == ChatType.docs
+                                                  ? "[Docs] ${
+                                                      widget.replyTo!.content!.length >= 35
+                                                      ? widget.replyTo!.content!.substring(0, 32) + "..."
+                                                      : widget.replyTo!.content!
+                                                    }"
+                                                  : widget.replyTo!.content!.length >= 35
+                                                    ? widget.replyTo!.content!.substring(0, 32) + "..."
+                                                    : widget.replyTo!.content!, 
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    height: 1.25
+                                                  )
+                                                )
+                                              ]
+                                            )
+                                          )
+                                        ),
                                       )
                                       : SizedBox(height: MQuery.height(0, context)),
                                       SizedBox(height: MQuery.height(0.005, context)),
                                       Row(
                                         children: [
-                                          SizedBox(
-                                              width: MQuery.width(
-                                                  0.003, context)),
+                                          SizedBox(width: MQuery.width(0.003, context)),
                                           Container(
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              color:
-                                                  Palette.handlesBackground,
+                                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                                              color:Palette.handlesBackground,
                                             ),
-                                            height:
-                                                MQuery.height(0.05, context),
-                                            width:
-                                                MQuery.width(0.325, context),
+                                            height: MQuery.height(0.05, context),
+                                            width: MQuery.width(0.325, context),
                                             padding: EdgeInsets.only(
-                                                left: MQuery.width(
-                                                    0.01, context)),
+                                              left: MQuery.width(0.01, context)
+                                            ),
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Row(
                                                   children: [
@@ -844,31 +824,22 @@ class _DocumentChatState extends State<DocumentChat> {
                                                     ),
                                                     SizedBox(width: MQuery.width(0.01, context)),
                                                     FutureBuilder<String?>(
-                                                        future: getFileName(
-                                                            widget
-                                                                .documentURL),
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          return snapshot
-                                                                  .hasData
-                                                              ? Text(
-                                                                  snapshot.data!.length >=
-                                                                          20
-                                                                      ? snapshot.data!.substring(0,
-                                                                              17) +
-                                                                          "..."
-                                                                      : snapshot
-                                                                          .data!,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      fontSize:
-                                                                          14))
-                                                              : SizedBox();
-                                                        }),
+                                                      future: getFileName(widget.documentURL),
+                                                      builder: (context, snapshot) {
+                                                        return snapshot.hasData
+                                                        ? Text(
+                                                            snapshot.data!.length >= 20
+                                                            ? snapshot.data!.substring(0,17) + "..."
+                                                            : snapshot.data!,
+                                                            style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 14
+                                                            )
+                                                          )
+                                                        : SizedBox();
+                                                      }
+                                                    ),
                                                   ],
                                                 ),
                                                 IconButton(
@@ -913,8 +884,10 @@ class _DocumentChatState extends State<DocumentChat> {
                           )
                         ],
                       ),
-                    ));
-              }),
+                    )
+                  );
+              }
+            ),
         );
       },
     );
